@@ -136,6 +136,7 @@ export default function UserPage() {
                     <ProductTableRow
                       key={row.id}
                       name={row.name}
+                      slug={row.id}
                       price={row.price}
                       cover={row.cover}
                       priceSale={row.priceSale}

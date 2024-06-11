@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
@@ -19,6 +20,7 @@ import Iconify from 'src/components/iconify';
 export default function ProductTableRow({
   selected,
   name,
+  slug,
   cover,
   price,
   priceSale,
@@ -43,12 +45,14 @@ export default function ProductTableRow({
         </TableCell>
 
         <TableCell component="th" scope="row" padding="none">
-          <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar alt={name} src={cover} />
-            <Typography variant="subtitle2" noWrap>
-              {name}
-            </Typography>
-          </Stack>
+          <Link to={`/product/${slug}`} style={{textDecoration: 'none', color: 'initial'}}>
+            <Stack direction="row" alignItems="center" spacing={2}>
+              <Avatar alt={name} src={cover} />
+              <Typography variant="subtitle2" noWrap>
+                {name}
+              </Typography>
+            </Stack>
+          </Link>
         </TableCell>
 
         <TableCell>{price}</TableCell>
@@ -95,6 +99,7 @@ ProductTableRow.propTypes = {
   cover: PropTypes.any,
   handleClick: PropTypes.func,
   name: PropTypes.any,
+  slug: PropTypes.any,
   price: PropTypes.any,
   priceSale: PropTypes.any,
   stock: PropTypes.bool,
