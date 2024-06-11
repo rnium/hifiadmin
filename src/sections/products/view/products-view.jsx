@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
@@ -11,6 +12,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
 import { products } from 'src/_mock/products';
+import { categories } from 'src/_mock/categories';
 
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
@@ -24,8 +26,7 @@ import { emptyRows, applyFilter, getComparator } from '../utils';
 
 // ----------------------------------------------------------------------
 
-
-export default function UserPage() {
+export default function ProductsPage() {
   const [page, setPage] = useState(0);
 
   const [order, setOrder] = useState('asc');
@@ -96,13 +97,33 @@ export default function UserPage() {
   const notFound = !dataFiltered.length && !!filterName;
   return (
     <Container>
-      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">Products</Typography>
+      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
+        <Typography variant="h4">All Categories</Typography>
 
         <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
-          New Product
+          New Category
         </Button>
       </Stack>
+      <Box 
+        sx={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 1,
+          mb: 2
+        }}
+      >
+        {
+          categories.map(cat => (
+            <Button
+              variant='contained'
+            >
+              {cat.title}
+            </Button>
+          ))
+        }
+
+      </Box>
+      <Typography variant="h4" sx={{mb: 1}}>All Products</Typography>
 
       <Card>
         <ProductTableToolbar
