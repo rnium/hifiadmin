@@ -62,3 +62,22 @@ export const products = [...Array(24)].map((_, index) => {
     status: sample(['sale', 'new', '', '']),
   };
 });
+
+export const product_tags = [
+  {
+    slug: 'laptop-all',
+    title: 'Laptop All'
+  },
+  {
+    slug: 'laptop-all-asus',
+    title: 'Asus Laptop'
+  },
+  {
+    slug: 'laptop-all-lenovo',
+    title: 'Lenovo Laptop'
+  },
+  {
+    slug: 'laptop-all-dell',
+    title: 'Dell Laptop'
+  },
+]

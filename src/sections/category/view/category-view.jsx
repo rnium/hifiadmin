@@ -49,7 +49,7 @@ export default function CategoryPage({ slug }) {
           },
         }}
       >
-        <Fade in={addCategoryModalOpen} direction='up'>
+        <Fade in={addCategoryModalOpen} >
           <Paper style={modalContainerStyle} sx={{ p: 2, py: 3 }} elevation={0}>
             <Typography>Add Subcategory of {slug}</Typography>
             <Stack
