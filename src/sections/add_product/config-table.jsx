@@ -34,7 +34,7 @@ function ConfigTable(
                         <Box>
                             {
                                 tableData.specs.map((spec, idx) => (
-                                    <Grid container spacing={2} sx={{ mt: 0.1 }} alignItems='flex-end'>
+                                    <Grid key={`spec${idx}`} container spacing={2} sx={{ mt: 0.1 }} alignItems='flex-end'>
                                         <Grid item xs={4}>
                                             <TextField
                                                 label="Property Title"
