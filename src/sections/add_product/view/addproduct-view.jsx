@@ -150,8 +150,12 @@ function AddProductView({ slug }) {
                           <ConfigTable
                             key={`table[${idx}]`}
                             tableData={tbl}
+                            tableIndex={idx}
                             sx={{ mt: 2 }}
                             handleRemove={() => remove(idx)}
+                            touched={touched}
+                            errors={errors}
+                            handleChange = {handleChange}
                           />
                         ))
                       }
