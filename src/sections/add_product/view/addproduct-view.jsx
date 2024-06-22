@@ -1,5 +1,6 @@
-// import { useState } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
+import { Form, Formik, FieldArray } from 'formik'
 
 import {
   Box, Chip, Card, Grid, Stack, Button, Container, TextField, Typography,
@@ -9,8 +10,23 @@ import { product_tags } from 'src/_mock/products';
 
 import ConfigTable from '../config-table';
 
+
 function AddProductView({ slug }) {
   // const [tags, setTags] = useState([...product_tags])
+  const [newTableTitle, setNewTableTitle] = useState('')
+
+  const newTable = () => (
+    {
+      title: newTableTitle,
+      specs: [
+        {
+          label: '',
+          value: '',
+        }
+      ]
+    }
+  )
+
   return (
     <Container>
       <Typography variant='h4'>Add New Product in <Typography variant='h4' color="secondary" component="span">{slug}</Typography> Category</Typography>
@@ -70,31 +86,83 @@ function AddProductView({ slug }) {
           </Grid>
         </Grid>
       </Card>
-      <Stack
-        spacing={2}
-        sx={{ my: 5 }}
+      <Formik
+        initialValues={{
+          table: [
+            {
+              title: 'Tbl 1',
+              specs: [
+                {
+                  label: 'Spec 1 Label',
+                  value: 'Spec 1 Value',
+                }
+              ]
+            },
+            {
+              title: 'Tbl 2',
+              specs: [
+                {
+                  label: 'Spec 1 Label',
+                  value: 'Spec 1 Value',
+                }
+              ]
+            },
+          ]
+        }}
       >
-        <Typography
-          textAlign="center"
-          variant='h6'
-        >
-          Configuration Tables
-        </Typography>
-        <Stack
-          direction="row"
-          spacing={2}
-          justifyContent="center"
-        >
-          <TextField
-            // fullWidth
-            label="New Table Name"
-          />
-          <Button variant='contained' >Add Table</Button>
-        </Stack>
-      </Stack>
-      <ConfigTable sx={{ mt: 2 }} />
-      <ConfigTable sx={{ mt: 2 }} />
-      <ConfigTable sx={{ mt: 2 }} />
+        {
+          ({ values, touched, errors, handleChange, handleBlur }) => (
+            <Form noValidate>
+              <FieldArray name='table'>
+                {
+                  ({ push, remove }) => (
+                    <>
+                      <Stack
+                        spacing={2}
+                        sx={{ my: 5 }}
+                      >
+                        <Typography
+                          textAlign="center"
+                          variant='h6'
+                        >
+                          Configuration Tables
+                        </Typography>
+                        <Stack
+                          direction="row"
+                          spacing={2}
+                          justifyContent="center"
+                        >
+                          <TextField
+                            onChange={e => setNewTableTitle(e.target.value)}
+                            label="New Table Name"
+                          />
+                          <Button
+                            onClick={() => push(newTable())}
+                            variant='contained'
+                            disabled={newTableTitle.length === 0}
+                          >
+                            Add Table
+                          </Button>
+                        </Stack>
+                      </Stack>
+                      {
+                        values.table.map((tbl, idx) => (
+                          <ConfigTable
+                            key={`table[${idx}]`}
+                            tableData={tbl}
+                            sx={{ mt: 2 }}
+                            handleRemove={() => remove(idx)}
+                          />
+                        ))
+                      }
+                    </>
+                  )
+                }
+              </FieldArray>
+            </Form>
+          )
+        }
+      </Formik>
     </Container>
   )
 }
