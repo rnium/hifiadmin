@@ -37,7 +37,7 @@ function ConfigTable(
                                     <Grid key={`spec${idx}`} container spacing={2} sx={{ mt: 0.1 }} alignItems='flex-end'>
                                         <Grid item xs={4}>
                                             <TextField
-                                                label="Property Title"
+                                                label="Specification Label"
                                                 fullWidth
                                                 variant='standard'
                                                 name={`table.${tableIndex}.specs.${idx}.label`}
@@ -47,7 +47,7 @@ function ConfigTable(
                                         </Grid>
                                         <Grid item xs={7}>
                                             <TextField
-                                                label="Property Value"
+                                                label="Specification Value"
                                                 fullWidth
                                                 variant='standard'
                                                 name={`table.${tableIndex}.specs.${idx}.value`}
@@ -69,7 +69,7 @@ function ConfigTable(
                                 size='small'
                                 onClick={() => {push({label: '', value: ''})}}
                             >
-                                Add New Property
+                                Add New Spec
                             </Button>
                         </Box>
                     )

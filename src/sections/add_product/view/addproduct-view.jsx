@@ -41,7 +41,6 @@ function AddProductView({ slug }) {
                   variant='filled'
                   multiline
                   rows={2}
-                  maxRows={3}
                 />
               </Grid>
               <Grid item xs={12} md={4}>
@@ -93,8 +92,8 @@ function AddProductView({ slug }) {
               title: 'Tbl 1',
               specs: [
                 {
-                  label: 'Spec 1 Label',
-                  value: 'Spec 1 Value',
+                  label: '',
+                  value: '',
                 }
               ]
             },
@@ -102,12 +101,15 @@ function AddProductView({ slug }) {
               title: 'Tbl 2',
               specs: [
                 {
-                  label: 'Spec 1 Label',
-                  value: 'Spec 1 Value',
+                  label: '',
+                  value: '',
                 }
               ]
             },
           ]
+        }}
+        onSubmit={values => {
+          console.log(values);
         }}
       >
         {
@@ -163,6 +165,9 @@ function AddProductView({ slug }) {
                   )
                 }
               </FieldArray>
+              <Stack direction='row' justifyContent='flex-end' sx={{mt: 2}}>
+                <Button variant='contained' type='submit' >Add Product</Button>
+              </Stack>
             </Form>
           )
         }
