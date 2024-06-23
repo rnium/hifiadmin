@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { stubFalse } from 'lodash';
+import { Link } from 'react-router-dom';
 
 import {
   Box, Fade, Stack, Modal, Paper, Button, Divider, Backdrop, Container,
@@ -55,7 +56,7 @@ export default function CategoryPage({ slug }) {
             <Stack
               alignItems="flex-end"
               spacing={1}
-              sx={{mt: 1}}
+              sx={{ mt: 1 }}
             >
               <TextField
                 label="Sub Category Name"
@@ -99,9 +100,11 @@ export default function CategoryPage({ slug }) {
         <Divider sx={{ my: 1 }} />
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
           <Typography variant="h4">{slug}</Typography>
-          <Button color="success" variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-            New Product
-          </Button>
+          <Link to={`/category/${slug}/addproduct`}>
+            <Button color="success" variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+              New Product
+            </Button>
+          </Link>
         </Stack>
         <ProductTable products={products} />
 
