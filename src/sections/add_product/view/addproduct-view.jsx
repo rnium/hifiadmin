@@ -1,3 +1,4 @@
+import * as Yup from 'yup';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Form, Formik, FieldArray } from 'formik'
@@ -26,6 +27,20 @@ function AddProductView({ slug }) {
       ]
     }
   )
+
+  const validationSchema = Yup.object({
+    table: Yup.array(
+      Yup.object({
+        title: Yup.string().required("Table title is required"),
+        specs: Yup.array(
+          Yup.object({
+            label: Yup.string().required('Specification title is required'),
+            value: Yup.string().required('Specification value is required'),
+          })
+        )
+      })
+    )
+  })
 
   return (
     <Container>
@@ -108,8 +123,9 @@ function AddProductView({ slug }) {
             },
           ]
         }}
+        validationSchema={validationSchema}
         onSubmit={values => {
-          console.log(values);
+          console.log(JSON.stringify(values));
         }}
       >
         {
@@ -158,6 +174,7 @@ function AddProductView({ slug }) {
                             touched={touched}
                             errors={errors}
                             handleChange = {handleChange}
+                            handleBlur = {handleBlur}
                           />
                         ))
                       }

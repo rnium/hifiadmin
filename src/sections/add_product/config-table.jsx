@@ -1,21 +1,20 @@
 import PropTypes from 'prop-types'
-import { FieldArray } from 'formik';
+import { getIn, FieldArray } from 'formik';
 
 import { Box, Card, Grid, Stack, Button, TextField, Typography } from '@mui/material';
 
 function ConfigTable(
     {
-        sx = {}, 
-        tableData, 
-        tableIndex, 
+        sx = {},
+        tableData,
+        tableIndex,
         handleRemove,
         touched,
         errors,
         handleChange,
+        handleBlur
     }
-) 
-
-{
+) {
     return (
         <Card sx={{ px: 3, py: 3, ...sx }}>
             <Stack
@@ -33,41 +32,55 @@ function ConfigTable(
                     ({ push, remove }) => (
                         <Box>
                             {
-                                tableData.specs.map((spec, idx) => (
-                                    <Grid key={`spec${idx}`} container spacing={2} sx={{ mt: 0.1 }} alignItems='flex-end'>
-                                        <Grid item xs={4}>
-                                            <TextField
-                                                label="Specification Label"
-                                                fullWidth
-                                                variant='standard'
-                                                name={`table.${tableIndex}.specs.${idx}.label`}
-                                                onChange={handleChange}
-                                                value={spec.label}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={7}>
-                                            <TextField
-                                                label="Specification Value"
-                                                fullWidth
-                                                variant='standard'
-                                                name={`table.${tableIndex}.specs.${idx}.value`}
-                                                onChange={handleChange}
-                                                value={spec.value}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={1}>
-                                            <Button onClick={() => remove(idx)} variant='outlined' color='warning' size='small'>Remove</Button>
-                                        </Grid>
+                                tableData.specs.map((spec, idx) => {
+                                    const spec_label = `table[${tableIndex}].specs[${idx}].label`;
+                                    const spec_value = `table[${tableIndex}].specs[${idx}].value`;
+                                    const label_error = getIn(errors, spec_label);
+                                    const label_touched = getIn(touched, spec_label);
+                                    const value_error = getIn(errors, spec_value);
+                                    const value_touched = getIn(touched, spec_value);
+                                    return (
+                                        <Grid key={`spec${idx}`} container spacing={2} sx={{ mt: 0.1 }} alignItems='flex-end'>
+                                            <Grid item xs={4}>
+                                                <TextField
+                                                    label="Specification Label"
+                                                    fullWidth
+                                                    variant='standard'
+                                                    name={spec_label}
+                                                    onChange={handleChange}
+                                                    value={spec.label}
+                                                    onBlur={handleBlur}
+                                                    error={label_touched && Boolean(label_error)}
+                                                    helperText={label_touched && Boolean(label_error) ? label_error : ""}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={7}>
+                                                <TextField
+                                                    label="Specification Value"
+                                                    fullWidth
+                                                    variant='standard'
+                                                    name={spec_value}
+                                                    onChange={handleChange}
+                                                    value={spec.value}
+                                                    onBlur={handleBlur}
+                                                    error={value_touched && Boolean(value_error)}
+                                                    helperText={value_touched && Boolean(value_error) ? value_error : ""}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={1}>
+                                                <Button onClick={() => remove(idx)} variant='outlined' color='warning' size='small'>Remove</Button>
+                                            </Grid>
 
-                                    </Grid>
-                                ))
+                                        </Grid>
+                                    )
+                                })
                             }
                             <Button
                                 sx={{ mt: 2 }}
                                 variant='outlined'
                                 color='success'
                                 size='small'
-                                onClick={() => {push({label: '', value: ''})}}
+                                onClick={() => { push({ label: '', value: '' }) }}
                             >
                                 Add New Spec
                             </Button>
@@ -90,4 +103,5 @@ ConfigTable.propTypes = {
     touched: PropTypes.any,
     errors: PropTypes.any,
     handleChange: PropTypes.any,
+    handleBlur: PropTypes.any,
 }
