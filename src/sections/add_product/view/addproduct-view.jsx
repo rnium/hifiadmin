@@ -29,10 +29,10 @@ function AddProductView({ slug }) {
   )
 
   const validationSchema = Yup.object({
-    product_title: Yup.string().required("Product title is required"),
-    price: Yup.number().required("Product price is required"),
+    product_title: Yup.string().required("Title is required"),
+    price: Yup.number().required("Price is required").min(0, 'Cannot be less than 0'),
     discount_price: null,
-    stock_count: Yup.number().required("Product stock count is required"),
+    stock_count: Yup.number().required("Stock count is required").min(0, 'Cannot be less than 0'),
     table: Yup.array(
       Yup.object({
         title: Yup.string().required("Table title is required"),
@@ -52,9 +52,9 @@ function AddProductView({ slug }) {
       <Formik
         initialValues={{
           product_title: '',
-          price: null,
-          discount_price: null,
-          stock_count: null,
+          price: '',
+          discount_price: '',
+          stock_count: '',
           tags: product_tags,
           images: [],
           table: [
@@ -87,6 +87,10 @@ function AddProductView({ slug }) {
           ({ values, touched, errors, handleChange, handleBlur }) => {
             const title_error = getIn(errors, 'product_title');
             const title_touched = getIn(touched, 'product_title');
+            const price_error = getIn(errors, 'price');
+            const price_touched = getIn(touched, 'price');
+            const stock_error = getIn(errors, 'stock_count');
+            const stock_touched = getIn(touched, 'stock_count');
             return (
               <Form noValidate>
                 <Card sx={{ px: 2, py: 3, mt: 1 }}>
@@ -117,6 +121,8 @@ function AddProductView({ slug }) {
                             value={values.price}
                             onChange={handleChange}
                             onBlur={handleBlur}
+                            error={price_touched && Boolean(price_error)}
+                            helperText={price_touched && Boolean(price_error) ? price_error : ''}
                           />
                         </Grid>
                         <Grid item xs={12} md={4}>
@@ -139,6 +145,8 @@ function AddProductView({ slug }) {
                             value={values.stock_count}
                             onChange={handleChange}
                             onBlur={handleBlur}
+                            error={stock_touched && Boolean(stock_error)}
+                            helperText={stock_touched && Boolean(stock_error) ? stock_error : ''}
                           />
                         </Grid>
                         <Grid item xs={12}>
