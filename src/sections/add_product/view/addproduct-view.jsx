@@ -10,11 +10,13 @@ import {
 import { product_tags } from 'src/_mock/products';
 
 import ConfigTable from '../config-table';
+import AddTagModal from '../add-tag-modal';
 
 
 function AddProductView({ slug }) {
   // const [tags, setTags] = useState([...product_tags])
-  const [newTableTitle, setNewTableTitle] = useState('')
+  const [newTableTitle, setNewTableTitle] = useState('');
+  const [tagsModalOpen, setTagsModalOpen] = useState(true);
 
   const newTable = () => (
     {
@@ -150,6 +152,10 @@ function AddProductView({ slug }) {
                           />
                         </Grid>
                         <Grid item xs={12}>
+                          <AddTagModal
+                            open={tagsModalOpen}
+                            setOpen={setTagsModalOpen}
+                          />
                           <Typography variant='body1'>Tags</Typography>
                           <Box
                             sx={{
@@ -172,6 +178,7 @@ function AddProductView({ slug }) {
                               variant='contained'
                               color='primary'
                               label="Add Tag"
+                              onClick={() => setTagsModalOpen(true)}
                             />
                           </Box>
                         </Grid>
