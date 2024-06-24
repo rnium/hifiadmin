@@ -63,7 +63,7 @@ export const products = [...Array(24)].map((_, index) => {
   };
 });
 
-export const product_tags = [
+export const all_tags = [
   {
     slug: 'laptop-all',
     title: 'Laptop All'

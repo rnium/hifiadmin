@@ -7,16 +7,16 @@ import {
   Box, Chip, Card, Grid, Stack, Button, Container, TextField, Typography,
 } from '@mui/material';
 
-import { product_tags } from 'src/_mock/products';
+import { all_tags } from 'src/_mock/products';
 
 import ConfigTable from '../config-table';
 import AddTagModal from '../add-tag-modal';
 
 
 function AddProductView({ slug }) {
-  // const [tags, setTags] = useState([...product_tags])
+  // const [tags, setTags] = useState([...all_tags])
   const [newTableTitle, setNewTableTitle] = useState('');
-  const [tagsModalOpen, setTagsModalOpen] = useState(true);
+  const [tagsModalOpen, setTagsModalOpen] = useState(false);
 
   const newTable = () => (
     {
@@ -57,7 +57,7 @@ function AddProductView({ slug }) {
           price: '',
           discount_price: '',
           stock_count: '',
-          tags: product_tags,
+          tags: [],
           images: [],
           table: [
             {
@@ -152,10 +152,6 @@ function AddProductView({ slug }) {
                           />
                         </Grid>
                         <Grid item xs={12}>
-                          <AddTagModal
-                            open={tagsModalOpen}
-                            setOpen={setTagsModalOpen}
-                          />
                           <Typography variant='body1'>Tags</Typography>
                           <Box
                             sx={{
@@ -165,15 +161,32 @@ function AddProductView({ slug }) {
                               mt: 1
                             }}
                           >
-                            {
-                              values.tags.map(t => (
-                                <Chip
-                                  key={t.slug}
-                                  label={t.title}
-                                  onDelete={() => console.log("deleted")}
-                                />
-                              ))
-                            }
+                            <FieldArray name="tags">
+                              {
+                                ({ push, remove }) => (
+                                  <>
+                                    <AddTagModal
+                                      open={tagsModalOpen}
+                                      setOpen={setTagsModalOpen}
+                                      all_tags={all_tags}
+                                      added_tags={values.tags}
+                                      push={push}
+                                      remove={remove}
+                                    />
+                                    {
+                                      values.tags.map((t, idx) => (
+                                        <Chip
+                                          key={t}
+                                          label={all_tags.find(tag => tag.slug === t).title}
+                                          onDelete={() => remove(idx)}
+                                        />
+                                      ))
+                                    }
+                                  </>
+                                )
+                              }
+
+                            </FieldArray>
                             <Chip
                               variant='contained'
                               color='primary'
