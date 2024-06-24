@@ -7,7 +7,7 @@ import {
   Box, Chip, Card, Grid, Stack, Button, Container, TextField, Typography,
 } from '@mui/material';
 
-import { all_tags } from 'src/_mock/products';
+import { all_tags, product_image_urls } from 'src/_mock/products';
 
 import ConfigTable from '../config-table';
 import AddTagModal from '../add-tag-modal';
@@ -212,13 +212,15 @@ function AddProductView({ slug }) {
                     </Grid>
                     <Grid item xs={12} md={4}>
                       <Typography variant='body1'>Product Images</Typography>
-                      <ProductImages />
+                      <ProductImages
+                        image_urls={product_image_urls}
+                      />
                     </Grid>
                   </Grid>
                 </Card>
                 <ConfigTable
                   kf_table
-                  tableData={{specs: values.key_features}}
+                  tableData={{ specs: values.key_features }}
                   tableIndex={0}
                   sx={{ mt: 2 }}
                   handleRemove={null}

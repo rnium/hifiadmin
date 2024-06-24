@@ -82,7 +82,7 @@ export const all_tags = [
   },
 ];
 
-export const product_images = [
+export const product_image_urls = [
   'https://www.startech.com.bd/image/cache/catalog/laptop/lenovo/ideapad-1-15ada7/ideapad-1-15ada7-02-500x500.webp',
   'https://www.startech.com.bd/image/cache/catalog/laptop/lenovo/ideapad-1-15ada7/ideapad-1-15ada7-01-500x500.webp',
   'https://www.startech.com.bd/image/cache/catalog/laptop/lenovo/ideapad-1-15ada7/ideapad-1-15ada7-03-500x500.webp',
