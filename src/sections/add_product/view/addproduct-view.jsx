@@ -280,6 +280,18 @@ function AddProductView({ slug }) {
                     )
                   }
                 </FieldArray>
+                <Card
+                  sx={{p: 2, mt: 3}}
+                >
+                  <Box>
+                    <TextField
+                      label="Product Description"
+                      fullWidth
+                      multiline
+                      rows={5}
+                    />
+                  </Box>
+                </Card>
                 <Stack direction='row' justifyContent='flex-end' sx={{ mt: 2 }}>
                   <Button variant='contained' type='submit' >Add Product</Button>
                 </Stack>
