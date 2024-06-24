@@ -35,13 +35,19 @@ function AddProductView({ slug }) {
     price: Yup.number().required("Price is required").min(0, 'Cannot be less than 0'),
     discount_price: null,
     stock_count: Yup.number().required("Stock count is required").min(0, 'Cannot be less than 0'),
+    key_features: Yup.array(
+      Yup.object({
+        label: Yup.string().required('Title is required'),
+        value: Yup.string().required('Value is required'),
+      })
+    ),
     table: Yup.array(
       Yup.object({
         title: Yup.string().required("Table title is required"),
         specs: Yup.array(
           Yup.object({
-            label: Yup.string().required('Specification title is required'),
-            value: Yup.string().required('Specification value is required'),
+            label: Yup.string().required('Title is required'),
+            value: Yup.string().required('Value is required'),
           })
         )
       })
@@ -59,6 +65,12 @@ function AddProductView({ slug }) {
           stock_count: '',
           tags: [],
           images: [],
+          key_features: [
+            {
+              label: '',
+              value: '',
+            }
+          ],
           table: [
             {
               title: 'Tbl 1',
@@ -202,6 +214,17 @@ function AddProductView({ slug }) {
                     </Grid>
                   </Grid>
                 </Card>
+                <ConfigTable
+                  tableData={{specs: values.key_features}}
+                  tableIndex={0}
+                  sx={{ mt: 2 }}
+                  handleRemove={null}
+                  touched={touched}
+                  errors={errors}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  kf_table
+                />
                 <FieldArray name='table'>
                   {
                     ({ push, remove }) => (

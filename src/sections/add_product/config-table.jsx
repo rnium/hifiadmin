@@ -12,9 +12,12 @@ function ConfigTable(
         touched,
         errors,
         handleChange,
-        handleBlur
+        handleBlur,
+        kf_table=false
     }
 ) {
+    const specs_array_name = kf_table ? 'key_features' : `table[${tableIndex}].specs`;
+    const table_title = kf_table ? "Key Features" : tableData.title;
     return (
         <Card sx={{ px: 3, py: 3, ...sx }}>
             <Stack
@@ -23,18 +26,22 @@ function ConfigTable(
 
             >
                 <Typography variant='h6' color="primary">
-                    {tableData.title}
+                    {table_title}
                 </Typography>
-                <Button color='error' onClick={handleRemove} variant='contained'>Delete Table</Button>
+                {
+                    !kf_table ? 
+                    <Button color='error' onClick={handleRemove} variant='contained'>Delete Table</Button>
+                    : null
+                }
             </Stack>
-            <FieldArray name={`table[${tableIndex}].specs`}>
+            <FieldArray name={specs_array_name}>
                 {
                     ({ push, remove }) => (
                         <Box>
                             {
                                 tableData.specs.map((spec, idx) => {
-                                    const spec_label = `table[${tableIndex}].specs[${idx}].label`;
-                                    const spec_value = `table[${tableIndex}].specs[${idx}].value`;
+                                    const spec_label = kf_table ? `key_features[${idx}].label` : `table[${tableIndex}].specs[${idx}].label`;
+                                    const spec_value = kf_table ? `key_features[${idx}].value` : `table[${tableIndex}].specs[${idx}].value`;
                                     const label_error = getIn(errors, spec_label);
                                     const label_touched = getIn(touched, spec_label);
                                     const value_error = getIn(errors, spec_value);
@@ -43,7 +50,7 @@ function ConfigTable(
                                         <Grid key={`spec${idx}`} container spacing={2} sx={{ mt: 0.1 }} alignItems='flex-end'>
                                             <Grid item xs={4}>
                                                 <TextField
-                                                    label="Specification Label"
+                                                    label="Feature Title"
                                                     fullWidth
                                                     variant='standard'
                                                     name={spec_label}
@@ -56,7 +63,7 @@ function ConfigTable(
                                             </Grid>
                                             <Grid item xs={7}>
                                                 <TextField
-                                                    label="Specification Value"
+                                                    label="Feature"
                                                     fullWidth
                                                     variant='standard'
                                                     name={spec_value}
@@ -82,7 +89,7 @@ function ConfigTable(
                                 size='small'
                                 onClick={() => { push({ label: '', value: '' }) }}
                             >
-                                Add New Spec
+                                New Feature Row
                             </Button>
                         </Box>
                     )
@@ -104,4 +111,5 @@ ConfigTable.propTypes = {
     errors: PropTypes.any,
     handleChange: PropTypes.any,
     handleBlur: PropTypes.any,
+    kf_table: PropTypes.any,
 }
