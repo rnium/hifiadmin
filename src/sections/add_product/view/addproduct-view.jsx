@@ -15,7 +15,7 @@ import ProductImages from '../product-images';
 
 
 function AddProductView({ slug }) {
-  // const [tags, setTags] = useState([...all_tags])
+  const [images, setImages] = useState([])
   const [newTableTitle, setNewTableTitle] = useState('');
   const [tagsModalOpen, setTagsModalOpen] = useState(false);
 
@@ -65,7 +65,6 @@ function AddProductView({ slug }) {
           discount_price: '',
           stock_count: '',
           tags: [],
-          images: [],
           key_features: [
             {
               label: '',
@@ -210,20 +209,13 @@ function AddProductView({ slug }) {
                         </Grid>
                       </Grid>
                     </Grid>
-                    <FieldArray name='images'>
-                      {
-                        ({ push, remove }) => (
-                          <Grid item xs={12} md={4}>
-                            <Typography variant='body1'>Product Images</Typography>
-                            <ProductImages
-                              images={values.images}
-                              push={push}
-                              remove={remove}
-                            />
-                          </Grid>
-                        )
-                      }
-                    </FieldArray>
+                    <Grid item xs={12} md={4}>
+                      <Typography variant='body1'>Product Images</Typography>
+                      <ProductImages
+                        images={images}
+                        setImages={setImages}
+                      />
+                    </Grid>
                   </Grid>
                 </Card>
                 <ConfigTable

@@ -1,7 +1,6 @@
 import 'swiper/css';
 import { Empty } from 'antd';
 import 'swiper/css/pagination';
-import { useState } from 'react';
 import propTypes from 'prop-types';
 import { Thumbs, FreeMode } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -23,21 +22,17 @@ const VisuallyHiddenInput = styled('input')({
 
 
 
-function ProductImages({ images, push, remove }) {
-    const [imageUrls, setImageUrls] = useState([]);
-    const handleFileChage = e => {
-        for (let i = 0; i < images.length; i += 1) {
-            remove(i);
-        }
-        const newImages = e.target.files;
-        const newImgUrls = [];
-        for (let i = 0; i < newImages.length; i += 1) {
-            push(newImages[i]);
-            newImgUrls.push(URL.createObjectURL(newImages[i]));
-        }
-        setImageUrls(newImgUrls);
-
+function ProductImages({ images, setImages }) {
+    const imageUrls = [];
+    for (let i = 0; i < images.length; i += 1) {
+        imageUrls.push(URL.createObjectURL(images[i]));
     }
+
+    const handleChange = e => {
+        const fa = Array.from(e.target.files);
+        setImages(fa);
+    }
+        
     return (
         <Box>
             {
@@ -88,7 +83,7 @@ function ProductImages({ images, push, remove }) {
                     size='small'
                 >
                     Select files
-                    <VisuallyHiddenInput onChange={handleFileChage} type="file" multiple />
+                    <VisuallyHiddenInput onChange={handleChange} type="file" multiple />
                 </Button>
                 <Typography
                     variant='body2'
@@ -104,6 +99,5 @@ export default ProductImages;
 
 ProductImages.propTypes = {
     images: propTypes.array,
-    push: propTypes.any,
-    remove: propTypes.any,
+    setImages: propTypes.any,
 }
