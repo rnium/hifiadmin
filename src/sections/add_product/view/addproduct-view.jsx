@@ -11,6 +11,7 @@ import { all_tags } from 'src/_mock/products';
 
 import ConfigTable from '../config-table';
 import AddTagModal from '../add-tag-modal';
+import ProductImages from '../product-images';
 
 
 function AddProductView({ slug }) {
@@ -211,10 +212,12 @@ function AddProductView({ slug }) {
                     </Grid>
                     <Grid item xs={12} md={4}>
                       <Typography variant='body1'>Product Images</Typography>
+                      <ProductImages />
                     </Grid>
                   </Grid>
                 </Card>
                 <ConfigTable
+                  kf_table
                   tableData={{specs: values.key_features}}
                   tableIndex={0}
                   sx={{ mt: 2 }}
@@ -223,7 +226,6 @@ function AddProductView({ slug }) {
                   errors={errors}
                   handleChange={handleChange}
                   handleBlur={handleBlur}
-                  kf_table
                 />
                 <FieldArray name='table'>
                   {

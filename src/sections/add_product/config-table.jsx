@@ -89,7 +89,7 @@ function ConfigTable(
                                 size='small'
                                 onClick={() => { push({ label: '', value: '' }) }}
                             >
-                                New Feature Row
+                                Add Feature Row
                             </Button>
                         </Box>
                     )

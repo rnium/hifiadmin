@@ -80,4 +80,12 @@ export const all_tags = [
     slug: 'laptop-all-dell',
     title: 'Dell Laptop'
   },
+];
+
+export const product_images = [
+  'https://www.startech.com.bd/image/cache/catalog/laptop/lenovo/ideapad-1-15ada7/ideapad-1-15ada7-02-500x500.webp',
+  'https://www.startech.com.bd/image/cache/catalog/laptop/lenovo/ideapad-1-15ada7/ideapad-1-15ada7-01-500x500.webp',
+  'https://www.startech.com.bd/image/cache/catalog/laptop/lenovo/ideapad-1-15ada7/ideapad-1-15ada7-03-500x500.webp',
+  'https://www.startech.com.bd/image/cache/catalog/laptop/lenovo/ideapad-1-15ada7/ideapad-1-15ada7-05-500x500.webp',
+  'https://www.startech.com.bd/image/cache/catalog/laptop/lenovo/ideapad-1-15ada7/ideapad-1-15ada7-06-500x500.webp'
 ]
