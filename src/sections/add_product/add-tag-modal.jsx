@@ -44,19 +44,19 @@ function AddTagModal({ open, setOpen, all_tags, added_tags, push, remove }) {
                                 sx={{ width: '100%', bgcolor: 'background.paper' }}
                             >
                                 {
-                                    searchRes.map(s_tag => (
-                                        <>
-                                        <ListItem>
-                                            <ListItemButton
-                                                sx={{width: '100%', borderRadius: 1}}
-                                                onClick={(e) => handleBtnClick(e, s_tag.slug)}
-                                                selected={added_tags.includes(s_tag.slug)}
-                                            >
-                                                <ListItemText>{s_tag.title}</ListItemText>
-                                            </ListItemButton>
-                                        </ListItem>
-                                        <Divider variant="middle" component="li" />
-                                        </>
+                                    searchRes.map((s_tag, idx) => (
+                                        <div key={idx}>
+                                            <ListItem>
+                                                <ListItemButton
+                                                    sx={{ width: '100%', borderRadius: 1 }}
+                                                    onClick={(e) => handleBtnClick(e, s_tag.slug)}
+                                                    selected={added_tags.includes(s_tag.slug)}
+                                                >
+                                                    <ListItemText>{s_tag.title}</ListItemText>
+                                                </ListItemButton>
+                                            </ListItem>
+                                            <Divider variant="middle" component="li" />
+                                        </div>
                                     ))
                                 }
                             </List>

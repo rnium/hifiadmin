@@ -7,7 +7,7 @@ import {
   Box, Chip, Card, Grid, Stack, Button, Container, TextField, Typography,
 } from '@mui/material';
 
-import { all_tags, product_image_urls } from 'src/_mock/products';
+import { all_tags } from 'src/_mock/products';
 
 import ConfigTable from '../config-table';
 import AddTagModal from '../add-tag-modal';
@@ -95,7 +95,7 @@ function AddProductView({ slug }) {
         }}
         validationSchema={validationSchema}
         onSubmit={values => {
-          console.log(JSON.stringify(values));
+          console.log(values);
         }}
       >
         {
@@ -210,12 +210,20 @@ function AddProductView({ slug }) {
                         </Grid>
                       </Grid>
                     </Grid>
-                    <Grid item xs={12} md={4}>
-                      <Typography variant='body1'>Product Images</Typography>
-                      <ProductImages
-                        image_urls={product_image_urls}
-                      />
-                    </Grid>
+                    <FieldArray name='images'>
+                      {
+                        ({ push, remove }) => (
+                          <Grid item xs={12} md={4}>
+                            <Typography variant='body1'>Product Images</Typography>
+                            <ProductImages
+                              images={values.images}
+                              push={push}
+                              remove={remove}
+                            />
+                          </Grid>
+                        )
+                      }
+                    </FieldArray>
                   </Grid>
                 </Card>
                 <ConfigTable

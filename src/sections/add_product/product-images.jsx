@@ -1,5 +1,7 @@
 import 'swiper/css';
+import { Empty } from 'antd';
 import 'swiper/css/pagination';
+import { useState } from 'react';
 import propTypes from 'prop-types';
 import { Thumbs, FreeMode } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -21,40 +23,58 @@ const VisuallyHiddenInput = styled('input')({
 
 
 
-function ProductImages({ image_urls }) {
+function ProductImages({ images, push, remove }) {
+    const [imageUrls, setImageUrls] = useState([]);
     const handleFileChage = e => {
-        console.log(e.target.files);
+        for (let i = 0; i < images.length; i += 1) {
+            remove(i);
+        }
+        const newImages = e.target.files;
+        const newImgUrls = [];
+        for (let i = 0; i < newImages.length; i += 1) {
+            push(newImages[i]);
+            newImgUrls.push(URL.createObjectURL(newImages[i]));
+        }
+        setImageUrls(newImgUrls);
+
     }
     return (
         <Box>
-            <Swiper
-                slidesPerView={3}
-                spaceBetween={5}
-                freeMode
-                pagination={{
-                    clickable: false,
+            {
+                imageUrls.length > 0 ?
+                    <Swiper
+                        slidesPerView={3}
+                        spaceBetween={5}
+                        freeMode
+                        pagination={{
+                            clickable: false,
 
-                }}
-                modules={[FreeMode, Thumbs]}
-                className="mySwiper"
-            >
-                {
-                    image_urls.map((i, idx) => (
-                        <SwiperSlide key={idx}>
-                            <Box>
-                                <img
-                                    width="100px"
-                                    src={i}
-                                    className='w-full'
-                                    alt='Product'
-                                />
-                            </Box>
-                        </SwiperSlide>
-                    ))
-                }
-            </Swiper>
+                        }}
+                        modules={[FreeMode, Thumbs]}
+                        className="mySwiper"
+                    >
+                        {
+                            imageUrls.map((i, idx) => (
+                                <SwiperSlide key={idx}>
+                                    <Box>
+                                        <img
+                                            width="100px"
+                                            src={i}
+                                            className='w-full'
+                                            alt='Product'
+                                        />
+                                    </Box>
+                                </SwiperSlide>
+                            ))
+                        }
+                    </Swiper> :
+                    <Empty
+                        description={null}
+                        image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    />
+            }
             <Stack
-            sx={{mt: 2}}
+                sx={{ mt: 2 }}
                 direction='row'
                 justifyContent="center"
                 alignItems="center"
@@ -73,7 +93,7 @@ function ProductImages({ image_urls }) {
                 <Typography
                     variant='body2'
                 >
-                    {image_urls.length || 'No'} {image_urls.length > 1 ? 'Files' : 'File'} Selected
+                    {imageUrls.length || 'No'} {imageUrls.length === 1 ? 'File' : 'Files'} Selected
                 </Typography>
             </Stack>
         </Box>
@@ -83,5 +103,7 @@ function ProductImages({ image_urls }) {
 export default ProductImages;
 
 ProductImages.propTypes = {
-    image_urls: propTypes.array,
+    images: propTypes.array,
+    push: propTypes.any,
+    remove: propTypes.any,
 }
