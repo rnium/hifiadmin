@@ -1,5 +1,5 @@
-import { Modal } from 'antd';
-import { useState } from 'react';
+import { Modal, message } from 'antd';
+import { useState, useEffect } from 'react';
 import { Link as RRLink } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
@@ -15,6 +15,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import { useRouter } from 'src/routes/hooks';
 
+import { useUser } from 'src/hooks/useUser';
 import { useLogin } from 'src/hooks/useAuth';
 
 import { bgGradient } from 'src/theme/css';
@@ -25,6 +26,7 @@ import Iconify from 'src/components/iconify';
 // ----------------------------------------------------------------------
 
 export default function LoginView() {
+  const {userIsAuthenticated, userIsLoaded} = useUser();
   const {success, loading, error, login: perform_post} = useLogin()
   const theme = useTheme();
 
@@ -36,6 +38,22 @@ export default function LoginView() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (error) {
+      const error_msg = error?.non_field_errors[0];
+      message.error(error_msg || "Something went wrong");
+    } else if (success) {
+      message.success("Login Successful")
+      router.push('/')
+    }
+  }, [success, error, router])
+
+  useEffect(() => {
+    if (userIsLoaded && userIsAuthenticated) {
+      router.push('/')
+    }
+  }, [userIsAuthenticated, userIsLoaded, router])
 
 
   const handleChange = e => {
@@ -86,6 +104,7 @@ export default function LoginView() {
         variant="contained"
         color="inherit"
         onClick={handleClick}
+        disabled={loading || !userIsLoaded}
       >
         Login
       </LoadingButton>
