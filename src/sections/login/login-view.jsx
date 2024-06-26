@@ -15,6 +15,8 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import { useRouter } from 'src/routes/hooks';
 
+import { useLogin } from 'src/hooks/useAuth';
+
 import { bgGradient } from 'src/theme/css';
 
 import Logo from 'src/components/logo';
@@ -23,26 +25,42 @@ import Iconify from 'src/components/iconify';
 // ----------------------------------------------------------------------
 
 export default function LoginView() {
+  const {success, loading, error, login: perform_post} = useLogin()
   const theme = useTheme();
 
   const router = useRouter();
 
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
+
+  const handleChange = e => {
+    setFormData(
+      {
+        ...formData,
+        [e.target.name]: e.target.value
+      }
+    )
+  }
+
   const handleClick = () => {
-    router.push('/dashboard');
+    perform_post(formData);
   };
 
   const renderForm = (
     <>
       <Stack spacing={3}>
-        <TextField name="email" label="Email address" />
+        <TextField onChange={handleChange} name="email" label="Email address" />
 
         <TextField
           name="password"
           label="Password"
           type={showPassword ? 'text' : 'password'}
+          onChange={handleChange}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
