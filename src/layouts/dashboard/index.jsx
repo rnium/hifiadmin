@@ -1,7 +1,12 @@
+import { Spin } from 'antd';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import Box from '@mui/material/Box';
+
+import { useRouter } from 'src/routes/hooks';
+
+import { useUser } from 'src/hooks/useUser';
 
 import Nav from './nav';
 import Main from './main';
@@ -10,8 +15,22 @@ import Header from './header';
 // ----------------------------------------------------------------------
 
 export default function DashboardLayout({ children }) {
+  const {userIsAuthenticated, userIsLoaded} = useUser();
   const [openNav, setOpenNav] = useState(false);
+  const router = useRouter();
 
+  if (userIsLoaded && !userIsAuthenticated) {
+    router.push('/login');
+  } else if (!userIsLoaded) {
+    return (
+      <Box>
+        <Spin 
+          size='large'
+        />
+      </Box>
+    )
+  }
+  
   return (
     <>
       <Header onOpenNav={() => setOpenNav(true)} />

@@ -15,7 +15,6 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import { useRouter } from 'src/routes/hooks';
 
-import { useUser } from 'src/hooks/useUser';
 import { useLogin } from 'src/hooks/useAuth';
 
 import { bgGradient } from 'src/theme/css';
@@ -26,7 +25,6 @@ import Iconify from 'src/components/iconify';
 // ----------------------------------------------------------------------
 
 export default function LoginView() {
-  const {userIsAuthenticated, userIsLoaded} = useUser();
   const {success, loading, error, login: perform_post} = useLogin()
   const theme = useTheme();
 
@@ -48,12 +46,6 @@ export default function LoginView() {
       router.push('/')
     }
   }, [success, error, router])
-
-  useEffect(() => {
-    if (userIsLoaded && userIsAuthenticated) {
-      router.push('/')
-    }
-  }, [userIsAuthenticated, userIsLoaded, router])
 
 
   const handleChange = e => {
@@ -104,7 +96,7 @@ export default function LoginView() {
         variant="contained"
         color="inherit"
         onClick={handleClick}
-        disabled={loading || !userIsLoaded}
+        disabled={loading}
       >
         Login
       </LoadingButton>
