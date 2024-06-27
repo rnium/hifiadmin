@@ -29,5 +29,5 @@ export const useUser = () => {
         }
     }, [data, success, error])
     
-    return {userInfo, userIsAuthenticated, userIsLoaded, loadingUser: loading};
+    return {userInfo, userIsAuthenticated, userIsLoaded, error, loadingUser: loading};
 }
