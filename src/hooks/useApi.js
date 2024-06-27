@@ -36,6 +36,7 @@ export const usePost = (url, auth_required = true, config = postDefaultConfig) =
 
 export const useGet = (url, auth_required = true) => {
     const [data, setData] = useState(null);
+    const [loaded, setLoaded] = useState(false);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState(null);
@@ -59,7 +60,8 @@ export const useGet = (url, auth_required = true) => {
             setError(error?.response?.data ? error?.response?.data : "Error Occured");
         } finally {
             setLoading(false);
+            setLoaded(true);
         }
     })
-    return { data, loading, success, error, perform_get };
+    return { data, loaded, loading, success, error, perform_get };
 }

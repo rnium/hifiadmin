@@ -1,9 +1,16 @@
 // import { faker } from '@faker-js/faker';
+import { Spin } from 'antd';
+import { useEffect } from 'react';
 
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 
+import { useGet } from 'src/hooks/useApi';
+
+import { api_endpoints as api } from 'src/utils/data';
 // import AppNewsUpdate from '../app-news-update';
 // import AppOrderTimeline from '../app-order-timeline';
 import AppWidgetSummary from '../app-widget-summary';
@@ -11,6 +18,14 @@ import AppWidgetSummary from '../app-widget-summary';
 // ----------------------------------------------------------------------
 
 export default function AppView() {
+  const { data, loaded: cat_loaded, loading, perform_get } = useGet(api.categories);
+
+  useEffect(() => {
+    if (!cat_loaded) {
+      perform_get();
+    }
+  }, [cat_loaded, perform_get])
+
   return (
     <Container maxWidth="xl">
       <Typography variant="h4" sx={{ mb: 5 }}>
@@ -54,7 +69,7 @@ export default function AppView() {
           />
         </Grid>
 
-        
+
 
         {/* <Grid xs={12} md={6} lg={8}>
           <AppNewsUpdate
@@ -87,6 +102,43 @@ export default function AppView() {
           />
         </Grid> */}
       </Grid>
+      <Typography variant="body1" sx={{ mt: 3, mb: 1 }}>
+        Main Categories
+      </Typography>
+      <Box
+        sx={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 1,
+        }}
+      >
+        {
+          !cat_loaded || loading ?
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                mt: 2
+              }}
+            >
+              <Spin />
+            </Box> :
+            null
+        }
+        {
+          !data ? null :
+            data.map((d, idx) => (
+              <Button
+                variant='contained'
+              >
+                {d.title}
+              </Button>
+            ))
+        }
+      </Box>
+
     </Container>
   );
 }

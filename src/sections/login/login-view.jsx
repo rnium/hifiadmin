@@ -39,7 +39,7 @@ export default function LoginView() {
 
   useEffect(() => {
     if (error) {
-      const error_msg = error?.non_field_errors[0];
+      const error_msg = error?.non_field_errors?.[0];
       message.error(error_msg || "Something went wrong");
     } else if (success) {
       message.success("Login Successful")
