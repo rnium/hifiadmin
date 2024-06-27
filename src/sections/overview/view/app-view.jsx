@@ -1,6 +1,7 @@
 // import { faker } from '@faker-js/faker';
 import { Spin } from 'antd';
 import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -130,11 +131,14 @@ export default function AppView() {
         {
           !data ? null :
             data.map((d, idx) => (
-              <Button
-                variant='contained'
-              >
-                {d.title}
-              </Button>
+              <Link to={`/category/${d.slug}`}>
+                <Button
+                  variant='contained'
+                  key={idx}
+                >
+                  {d.title}
+                </Button>
+              </Link>
             ))
         }
       </Box>
