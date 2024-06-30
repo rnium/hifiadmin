@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { stubFalse } from 'lodash';
 import { Link } from 'react-router-dom';
 
 import {
   Box, Stack, Button, Divider, Container, Typography
 } from '@mui/material'
+
+import { useGet } from 'src/hooks/useApi';
+
+import { api_endpoints } from 'src/utils/data';
 
 import { products } from 'src/_mock/products';
 import { categories } from 'src/_mock/categories';
@@ -18,11 +21,9 @@ import AddCatModal from '../add-modal';
 
 // ----------------------------------------------------------------------
 
-
-
 export default function CategoryPage({ slug }) {
-  const [addCategoryModalOpen, setAddCategoryModalOpen] = useState(stubFalse);
-  
+  const [addCategoryModalOpen, setAddCategoryModalOpen] = useState(false);
+  const { data, loaded, loading, success, error, perform_get } = useGet();
   return (
     <>
       <AddCatModal
