@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 import {
   Box, Stack, Button, Divider, Container, Typography
@@ -12,6 +12,7 @@ import { api_endpoints } from 'src/utils/data';
 
 import { products } from 'src/_mock/products';
 import { categories } from 'src/_mock/categories';
+import Loading from 'src/layouts/dashboard/common/loading';
 
 import Iconify from 'src/components/iconify';
 
@@ -23,7 +24,16 @@ import AddCatModal from '../add-modal';
 
 export default function CategoryPage({ slug }) {
   const [addCategoryModalOpen, setAddCategoryModalOpen] = useState(false);
-  const { data, loaded, loading, success, error, perform_get } = useGet();
+  const params = useParams();
+  
+  const { data, loaded, loading, success, error, perform_get } = useGet(`${api_endpoints.categories}/${params.slug}/`);
+  
+  if (!loaded) {
+    return (
+      <Loading sx={{mt: '5vh'}} size='large' />
+    )
+  }
+
   return (
     <>
       <AddCatModal
