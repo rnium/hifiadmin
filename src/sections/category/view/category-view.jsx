@@ -4,8 +4,7 @@ import { stubFalse } from 'lodash';
 import { Link } from 'react-router-dom';
 
 import {
-  Box, Fade, Stack, Modal, Paper, Button, Divider, Backdrop, Container,
-  TextField, Typography,
+  Box, Stack, Button, Divider, Container, Typography
 } from '@mui/material'
 
 import { products } from 'src/_mock/products';
@@ -15,59 +14,21 @@ import Iconify from 'src/components/iconify';
 
 import ProductTable from 'src/sections/products/product-table-main';
 
+import AddCatModal from '../add-modal';
 
 // ----------------------------------------------------------------------
 
-const modalContainerStyle = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  boxShadow: 24,
-  p: 4,
-};
 
 
 export default function CategoryPage({ slug }) {
   const [addCategoryModalOpen, setAddCategoryModalOpen] = useState(stubFalse);
-  const handleAddCategoryModalClose = e => {
-    setAddCategoryModalOpen(false);
-  }
+  
   return (
     <>
-      <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
+      <AddCatModal
         open={addCategoryModalOpen}
-        onClose={handleAddCategoryModalClose}
-        closeAfterTransition
-        slots={{ backdrop: Backdrop }}
-        slotProps={{
-          backdrop: {
-            timeout: 500,
-          },
-        }}
-      >
-        <Fade in={addCategoryModalOpen} >
-          <Paper style={modalContainerStyle} sx={{ p: 2, py: 3 }} elevation={0}>
-            <Typography>Add Subcategory of {slug}</Typography>
-            <Stack
-              alignItems="flex-end"
-              spacing={1}
-              sx={{ mt: 1 }}
-            >
-              <TextField
-                label="Sub Category Name"
-                variant='filled'
-                fullWidth
-              />
-              <Button variant='contained'>Add</Button>
-            </Stack>
-          </Paper>
-        </Fade>
-      </Modal>
+        setOpen={setAddCategoryModalOpen}
+      />
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
           <Typography variant="h4">{slug}</Typography>
