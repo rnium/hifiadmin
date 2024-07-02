@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
 import {
-  Box, Stack, Button, Divider, Container, Typography
+  Box, Stack, Button, Divider, Tooltip, Container, Typography
 } from '@mui/material'
 
 import { useGet } from 'src/hooks/useApi';
@@ -84,11 +84,16 @@ export default function CategoryPage({ slug }) {
                 to={`/category/${cat.slug}`}
                 key={cat.slug}
               >
-                <Button
-                  variant='contained'
+                <Tooltip
+                  title={`${cat.cat_type} category`}
+                  arrow
                 >
-                  {cat.title}
-                </Button>
+                  <Button
+                    variant='contained'
+                  >
+                    {cat.title}
+                  </Button>
+                </Tooltip>
               </Link>
             ))
           }
