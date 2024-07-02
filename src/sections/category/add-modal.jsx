@@ -31,8 +31,7 @@ const cat_types = [
 function AddCatModal({ open, setOpen, parent, parentType, refetchPage }) {
     const [formData, setFormData] = useState({
         title: '',
-        parent,
-        cat_type: 'general'
+        cat_type: ''
     });
 
     // const afterPostComplete
@@ -47,7 +46,9 @@ function AddCatModal({ open, setOpen, parent, parentType, refetchPage }) {
     }
     const handleSubmit = () => {
         formData.slug = slugify(formData.title);
+        formData.parent = parent;
         perform_post(formData);
+        console.log(formData);
     }
     useEffect(() => {
         if (error) {
@@ -94,7 +95,7 @@ function AddCatModal({ open, setOpen, parent, parentType, refetchPage }) {
                             >
                                 {
                                     parentType === 'feature' ?
-                                        <MenuItem value='tag' /> :
+                                        <MenuItem value='tag'>Tag Under Feature</MenuItem> :
                                         cat_types.map((ct, idx) => (
                                             <MenuItem
                                                 key={idx}

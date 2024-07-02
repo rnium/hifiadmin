@@ -14,7 +14,7 @@ export const usePost = (url, auth_required = true, config = postDefaultConfig) =
     const [error, setError] = useState(null);
 
 
-    const perform_post = async payload => {
+    const perform_post = useCallback(async payload => {
         if (auth_required && config?.headers) {
             config.headers.Authorization = `Token ${localStorage.getItem('hifi_admin_t')}`
         }
@@ -30,7 +30,7 @@ export const usePost = (url, auth_required = true, config = postDefaultConfig) =
         } finally {
             setLoading(false);
         }
-    }
+    }, [url, auth_required])
     return { data, loading, success, setSuccess, error, setError, perform_post };
 }
 
@@ -62,6 +62,6 @@ export const useGet = (url, auth_required = true) => {
             setLoading(false);
             setLoaded(true);
         }
-    })
+    }, [url, auth_required])
     return { data, loaded, loading, success, error, perform_get };
 }

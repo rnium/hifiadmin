@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
 
 import {
   Box, Stack, Button, Divider, Container, Typography
@@ -23,15 +23,12 @@ import AddCatModal from '../add-modal';
 
 export default function CategoryPage({ slug }) {
   const [addCategoryModalOpen, setAddCategoryModalOpen] = useState(false);
-  const params = useParams();
 
-  const { data, loaded, error, perform_get } = useGet(`${api_endpoints.categories}${params.slug}/`);
+  const { data, loaded, error, perform_get } = useGet(`${api_endpoints.categories}${slug}`);
 
   useEffect(() => {
-    if (!loaded) {
-      perform_get();
-    }
-  })
+    perform_get();
+  }, [slug, perform_get])
 
   if (!loaded || error) {
     return (
@@ -51,9 +48,12 @@ export default function CategoryPage({ slug }) {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
           <Typography variant="h4">{data?.title}</Typography>
-          <Button onClick={() => setAddCategoryModalOpen(true)} color="success" variant="outlined" startIcon={<Iconify icon="eva:plus-fill" />}>
-            New Sub Category
-          </Button>
+          {
+            data?.cat_type === 'tag' ? null :
+              <Button onClick={() => setAddCategoryModalOpen(true)} color="success" variant="outlined" startIcon={<Iconify icon="eva:plus-fill" />}>
+                New Sub Category
+              </Button>
+          }
         </Stack>
         <Divider />
         {/* <Typography sx={{ my: 1 }}>Sub Categories under {data?.title}</Typography> */}
@@ -68,7 +68,7 @@ export default function CategoryPage({ slug }) {
           {
             !data?.childs?.length ?
               <Box
-                sx={{display: 'flex', justifyContent: 'center'}}
+                sx={{ display: 'flex', justifyContent: 'center' }}
               >
                 <Typography
                   textAlign='center'
@@ -80,12 +80,16 @@ export default function CategoryPage({ slug }) {
           }
           {
             data?.childs.map(cat => (
-              <Button
-                variant='contained'
+              <Link
+                to={`/category/${cat.slug}`}
                 key={cat.slug}
               >
-                {cat.title}
-              </Button>
+                <Button
+                  variant='contained'
+                >
+                  {cat.title}
+                </Button>
+              </Link>
             ))
           }
 
