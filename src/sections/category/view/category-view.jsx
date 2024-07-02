@@ -44,6 +44,9 @@ export default function CategoryPage({ slug }) {
       <AddCatModal
         open={addCategoryModalOpen}
         setOpen={setAddCategoryModalOpen}
+        parent={data?.id}
+        parentType={data?.cat_type}
+        refetchPage={perform_get}
       />
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
@@ -71,7 +74,7 @@ export default function CategoryPage({ slug }) {
                   textAlign='center'
                   color='text.secondary'
                 >
-                  No Child Categories
+                  No Sub Categories
                 </Typography>
               </Box> : null
           }

@@ -31,7 +31,7 @@ export const usePost = (url, auth_required = true, config = postDefaultConfig) =
             setLoading(false);
         }
     }
-    return { data, loading, success, error, perform_post };
+    return { data, loading, success, setSuccess, error, setError, perform_post };
 }
 
 export const useGet = (url, auth_required = true) => {
