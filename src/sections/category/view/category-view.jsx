@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import { message } from 'antd';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
@@ -8,9 +9,9 @@ import {
   Box, Stack, Button, Divider, Tooltip, TextField, Container, Typography
 } from '@mui/material'
 
-import { useGet } from 'src/hooks/useApi';
+import { useGet, usePost } from 'src/hooks/useApi';
 
-import { api_endpoints } from 'src/utils/data';
+import { api_endpoints, endpoint_suffixes } from 'src/utils/data';
 
 import { products } from 'src/_mock/products';
 import Loading from 'src/layouts/dashboard/common/loading';
@@ -31,11 +32,18 @@ export default function CategoryPage({ slug }) {
     {
       title: newTableTitle,
       id: null,
-      specs: []
+      specs: [
+        {
+          id: null,
+          title: '',
+          aliases: '',
+        }
+      ]
     }
   )
   const { data, loaded, setLoaded, error, perform_get } = useGet(`${api_endpoints.categories}${slug}`);
-
+  const {loading: postingTable, success: tableUpdateSuccess, setSuccess, error: tableError, setError: setTableError, perform_post: post_table} = usePost(`${api_endpoints.categories}${slug}${endpoint_suffixes.update_table}`)
+  
   useEffect(() => {
     if (!loaded) {
       perform_get();
@@ -45,6 +53,17 @@ export default function CategoryPage({ slug }) {
   useEffect(() => {
     setLoaded(false);
   }, [slug, setLoaded])
+
+  useEffect(() => {
+    if (tableUpdateSuccess) {
+      message.info('Tables updated')
+      setSuccess(false);
+    }
+    if (tableError) {
+      message.error('Cannot update')
+      setTableError(false);
+    }
+  }, [tableUpdateSuccess, setSuccess, tableError, setTableError])
 
   const validationSchema = Yup.object({
     table: Yup.array(
@@ -136,7 +155,7 @@ export default function CategoryPage({ slug }) {
           }}
           validationSchema={validationSchema}
           onSubmit={values => {
-            console.log(values);
+            post_table(values.table);
           }}
         >
           {
@@ -192,7 +211,13 @@ export default function CategoryPage({ slug }) {
                               Add Table
                             </Button>
                           </Stack>
-                          <Button onClick={(e) => handleSubmit(e)} variant='contained'>Save Tables</Button>
+                          <Button 
+                          onClick={(e) => handleSubmit(e)} 
+                          variant='contained'
+                          disabled={postingTable}
+                          >
+                            Save Tables
+                            </Button>
                         </Stack>
                       </>
                     )
