@@ -79,7 +79,7 @@ function SpecTable(
                                 variant='outlined'
                                 color='success'
                                 size='small'
-                                onClick={() => { push({ label: '', value: '' }) }}
+                                onClick={() => { push({ title: '', id: null, aliases: [] }) }}
                             >
                                 Add Feature Row
                             </Button>

@@ -30,12 +30,8 @@ export default function CategoryPage({ slug }) {
   const newTable = () => (
     {
       title: newTableTitle,
-      specs: [
-        {
-          label: '',
-          value: '',
-        }
-      ]
+      id: null,
+      specs: []
     }
   )
   const { data, loaded, setLoaded, error, perform_get } = useGet(`${api_endpoints.categories}${slug}`);
@@ -57,7 +53,6 @@ export default function CategoryPage({ slug }) {
         specs: Yup.array(
           Yup.object({
             title: Yup.string().required('Title is required'),
-            aliases: Yup.string(),
           })
         )
       })
@@ -137,44 +132,27 @@ export default function CategoryPage({ slug }) {
 
         <Formik
           initialValues={{
-            table: [
-              {
-                title: 'Tbl 1',
-                specs: [
-                  {
-                    title: '',
-                    aliases: '',
-                  }
-                ]
-              },
-              {
-                title: 'Tbl 2',
-                specs: [
-                  {
-                    title: '',
-                    aliases: '',
-                  }
-                ]
-              },
-            ]
+            table: data?.tables || []
           }}
           validationSchema={validationSchema}
-          onSubmit={values => console.log(values)}
+          onSubmit={values => {
+            console.log(values);
+          }}
         >
           {
-            ({ values, touched, errors, handleChange, handleBlur }) => (
+            ({ values, touched, errors, handleChange, handleBlur, handleSubmit }) => (
               <Form noValidate>
+                <Typography
+                  textAlign="center"
+                  variant='h6'
+                  sx={{ mt: 3 }}
+                >
+                  Configuration Tables
+                </Typography>
                 <FieldArray name='table'>
                   {
                     ({ push, remove }) => (
                       <>
-                        <Typography
-                          textAlign="center"
-                          variant='h6'
-                          sx={{mt: 3}}
-                        >
-                          Configuration Tables
-                        </Typography>
                         {
                           values.table.map((tbl, idx) => (
                             <SpecTable
@@ -214,7 +192,7 @@ export default function CategoryPage({ slug }) {
                               Add Table
                             </Button>
                           </Stack>
-                          <Button variant='contained'>Save Tables</Button>
+                          <Button onClick={(e) => handleSubmit(e)} variant='contained'>Save Tables</Button>
                         </Stack>
                       </>
                     )
