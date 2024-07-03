@@ -63,5 +63,5 @@ export const useGet = (url, auth_required = true) => {
             setLoaded(true);
         }
     }, [url, auth_required])
-    return { data, loaded, loading, success, error, perform_get };
+    return { data, loaded, setLoaded, loading, success, error, perform_get };
 }

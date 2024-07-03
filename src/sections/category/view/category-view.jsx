@@ -38,11 +38,17 @@ export default function CategoryPage({ slug }) {
       ]
     }
   )
-  const { data, loaded, error, perform_get } = useGet(`${api_endpoints.categories}${slug}`);
+  const { data, loaded, setLoaded, error, perform_get } = useGet(`${api_endpoints.categories}${slug}`);
 
   useEffect(() => {
-    perform_get();
-  }, [slug, perform_get])
+    if (!loaded) {
+      perform_get();
+    }
+  }, [perform_get, loaded])
+
+  useEffect(() => {
+    setLoaded(false);
+  }, [slug, setLoaded])
 
   const validationSchema = Yup.object({
     table: Yup.array(
