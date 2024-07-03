@@ -18,7 +18,7 @@ import { emptyRows, applyFilter, getComparator } from './utils';
 
 // ----------------------------------------------------------------------
 
-export default function ProductTable({products}) {
+export default function ProductTable({products, sx}) {
     const [page, setPage] = useState(0);
 
     const [order, setOrder] = useState('asc');
@@ -88,7 +88,7 @@ export default function ProductTable({products}) {
 
     const notFound = !dataFiltered.length && !!filterName;
     return (
-        <Card>
+        <Card sx={{...sx}}>
             <ProductTableToolbar
                 numSelected={selected.length}
                 filterName={filterName}
@@ -155,5 +155,6 @@ export default function ProductTable({products}) {
 }
 
 ProductTable.propTypes = {
-    products: PropTypes.any
+    products: PropTypes.any,
+    sx: PropTypes.any
 }

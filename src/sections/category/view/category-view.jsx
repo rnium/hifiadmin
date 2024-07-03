@@ -1,9 +1,11 @@
+import * as Yup from 'yup';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { Form, Formik, FieldArray } from 'formik';
 
 import {
-  Box, Stack, Button, Divider, Tooltip, Container, Typography
+  Box, Stack, Button, Divider, Tooltip, TextField, Container, Typography
 } from '@mui/material'
 
 import { useGet } from 'src/hooks/useApi';
@@ -17,18 +19,44 @@ import Iconify from 'src/components/iconify';
 
 import ProductTable from 'src/sections/products/product-table-main';
 
+import SpecTable from '../spec-table';
 import AddCatModal from '../add-modal';
 
 // ----------------------------------------------------------------------
 
 export default function CategoryPage({ slug }) {
+  const [newTableTitle, setNewTableTitle] = useState('');
   const [addCategoryModalOpen, setAddCategoryModalOpen] = useState(false);
-
+  const newTable = () => (
+    {
+      title: newTableTitle,
+      specs: [
+        {
+          label: '',
+          value: '',
+        }
+      ]
+    }
+  )
   const { data, loaded, error, perform_get } = useGet(`${api_endpoints.categories}${slug}`);
 
   useEffect(() => {
     perform_get();
   }, [slug, perform_get])
+
+  const validationSchema = Yup.object({
+    table: Yup.array(
+      Yup.object({
+        title: Yup.string().required("Table title is required"),
+        specs: Yup.array(
+          Yup.object({
+            title: Yup.string().required('Title is required'),
+            aliases: Yup.string(),
+          })
+        )
+      })
+    )
+  })
 
   if (!loaded || error) {
     return (
@@ -100,8 +128,105 @@ export default function CategoryPage({ slug }) {
 
         </Box>
         <Divider sx={{ my: 1 }} />
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
-          <Typography variant="h4">{slug}</Typography>
+
+        <Formik
+          initialValues={{
+            table: [
+              {
+                title: 'Tbl 1',
+                specs: [
+                  {
+                    title: '',
+                    aliases: '',
+                  }
+                ]
+              },
+              {
+                title: 'Tbl 2',
+                specs: [
+                  {
+                    title: '',
+                    aliases: '',
+                  }
+                ]
+              },
+            ]
+          }}
+          validationSchema={validationSchema}
+          onSubmit={values => console.log(values)}
+        >
+          {
+            ({ values, touched, errors, handleChange, handleBlur }) => (
+              <Form noValidate>
+                <FieldArray name='table'>
+                  {
+                    ({ push, remove }) => (
+                      <>
+                        <Typography
+                          textAlign="center"
+                          variant='h6'
+                          sx={{mt: 3}}
+                        >
+                          Configuration Tables
+                        </Typography>
+                        {
+                          values.table.map((tbl, idx) => (
+                            <SpecTable
+                              key={`table[${idx}]`}
+                              tableData={tbl}
+                              tableIndex={idx}
+                              sx={{ mt: 2 }}
+                              handleRemove={() => remove(idx)}
+                              touched={touched}
+                              errors={errors}
+                              handleChange={handleChange}
+                              handleBlur={handleBlur}
+                            />
+                          ))
+                        }
+                        <Stack
+                          spacing={2}
+                          sx={{ my: 3 }}
+                          direction="row"
+                          justifyContent='space-between'
+                        >
+
+                          <Stack
+                            direction="row"
+                            spacing={2}
+                            justifyContent="flex-start"
+                          >
+                            <TextField
+                              onChange={e => setNewTableTitle(e.target.value)}
+                              label="New Table Name"
+                            />
+                            <Button
+                              onClick={() => push(newTable())}
+                              variant='outlined'
+                              disabled={newTableTitle.length === 0}
+                            >
+                              Add Table
+                            </Button>
+                          </Stack>
+                          <Button variant='contained'>Save Tables</Button>
+                        </Stack>
+                      </>
+                    )
+                  }
+                </FieldArray>
+              </Form>
+            )
+          }
+        </Formik>
+        <Divider />
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          mt={3}
+          mb={2}
+        >
+          <Typography variant="h4">All Products under {data?.title}</Typography>
           <Link to={`/category/${slug}/addproduct`}>
             <Button color="success" variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
               New Product
