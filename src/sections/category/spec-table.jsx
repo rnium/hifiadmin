@@ -17,6 +17,9 @@ function SpecTable(
 ) {
     const specs_array_name = `table[${tableIndex}].specs`;
     const table_title = tableData.title;
+    if (!tableData?.id) {
+        sx.backgroundColor = '#caf0f8'
+    }
     return (
         <Card sx={{ px: 3, py: 3, ...sx }}>
             <Stack

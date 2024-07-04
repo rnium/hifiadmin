@@ -43,7 +43,7 @@ export default function CategoryPage({ slug }) {
       ]
     }
   )
-  const { data, loaded, setLoaded, error, perform_get } = useGet(`${api_endpoints.categories}${slug}`);
+  const { data, loaded, reset, error, perform_get } = useGet(`${api_endpoints.categories}${slug}`);
   const {loading: postingTable, success: tableUpdateSuccess, setSuccess, error: tableError, setError: setTableError, perform_post: post_table} = usePost(`${api_endpoints.categories}${slug}${endpoint_suffixes.update_table}`)
   
   useEffect(() => {
@@ -53,19 +53,20 @@ export default function CategoryPage({ slug }) {
   }, [perform_get, loaded])
 
   useEffect(() => {
-    setLoaded(false);
-  }, [slug, setLoaded])
+    reset();
+  }, [slug, reset])
 
   useEffect(() => {
     if (tableUpdateSuccess) {
       message.info('Tables updated')
       setSuccess(false);
+      perform_get();
     }
     if (tableError) {
       message.error('Cannot update')
       setTableError(false);
     }
-  }, [tableUpdateSuccess, setSuccess, tableError, setTableError])
+  }, [tableUpdateSuccess, setSuccess, tableError, perform_get, setTableError])
 
   const validationSchema = Yup.object({
     table: Yup.array(
