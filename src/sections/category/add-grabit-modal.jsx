@@ -50,7 +50,7 @@ function AddGrabITModal({ open, setOpen, push }) {
         <Modal
             open={open}
             onCancel={() => setOpen(false)}
-            title="Add from GrabIT"
+            title="Add tables via GrabIT"
             footer={null}
         >
             {/* <Typography>Add Subcategory</Typography> */}

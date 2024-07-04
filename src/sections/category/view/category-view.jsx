@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import { Form, Formik, FieldArray } from 'formik';
 
 import {
-  Box, Stack, Button, Divider, Tooltip, TextField, Container, Typography
+  Box, Stack, Button, Divider, Tooltip, TextField, Container, Typography, Breadcrumbs, Link as MUILink
 } from '@mui/material'
 
 import { useGet, usePost } from 'src/hooks/useApi';
@@ -44,8 +44,8 @@ export default function CategoryPage({ slug }) {
     }
   )
   const { data, loaded, reset, error, perform_get } = useGet(`${api_endpoints.categories}${slug}`);
-  const {loading: postingTable, success: tableUpdateSuccess, setSuccess, error: tableError, setError: setTableError, perform_post: post_table} = usePost(`${api_endpoints.categories}${slug}${endpoint_suffixes.update_table}`)
-  
+  const { loading: postingTable, success: tableUpdateSuccess, reset: tableUpdateReset, error: tableError, setError: setTableError, perform_post: post_table } = usePost(`${api_endpoints.categories}${slug}${endpoint_suffixes.update_table}`)
+
   useEffect(() => {
     if (!loaded) {
       perform_get();
@@ -59,14 +59,14 @@ export default function CategoryPage({ slug }) {
   useEffect(() => {
     if (tableUpdateSuccess) {
       message.info('Tables updated')
-      setSuccess(false);
-      perform_get();
+      tableUpdateReset();
+      reset();
     }
     if (tableError) {
       message.error('Cannot update')
       setTableError(false);
     }
-  }, [tableUpdateSuccess, setSuccess, tableError, perform_get, setTableError])
+  }, [tableUpdateSuccess, tableError, reset, tableUpdateReset, setTableError])
 
   const validationSchema = Yup.object({
     table: Yup.array(
@@ -87,6 +87,14 @@ export default function CategoryPage({ slug }) {
     )
   }
 
+  let currentParent = data?.parent;
+  const parents = [];
+  while (currentParent) {
+    parents.push(currentParent);
+    currentParent = currentParent?.parent;
+  }
+
+  console.log(parents);
   return (
     <>
       <AddCatModal
@@ -97,6 +105,31 @@ export default function CategoryPage({ slug }) {
         refetchPage={perform_get}
       />
       <Container>
+        {
+          parents.length > 0 ?
+            <Stack
+              alignItems='center'
+            >
+              <Breadcrumbs aria-label="breadcrumb">
+                {
+                  parents.reverse().map((p, idx) => (
+                    <Link
+                      key={idx}
+                      to={`/category/${p.slug}`}
+                      style={{ textDecoration: 'none' }}
+                    >
+                      <MUILink color='text.secondary' style={{ textDecoration: 'none' }}>
+                        {p.title}
+                      </MUILink>
+                    </Link>
+                  ))
+                }
+                <MUILink color='primary' style={{ textDecoration: 'none' }}>
+                  {data.title}
+                </MUILink>
+              </Breadcrumbs>
+            </Stack> : null
+        }
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
           <Typography variant="h4">{data?.title}</Typography>
           {
@@ -226,13 +259,13 @@ export default function CategoryPage({ slug }) {
                               Grabit
                             </Button>
                           </Stack>
-                          <Button 
-                          onClick={(e) => handleSubmit(e)} 
-                          variant='contained'
-                          disabled={postingTable}
+                          <Button
+                            onClick={(e) => handleSubmit(e)}
+                            variant='contained'
+                            disabled={postingTable}
                           >
                             Save Tables
-                            </Button>
+                          </Button>
                         </Stack>
                       </>
                     )
