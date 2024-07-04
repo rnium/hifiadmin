@@ -1,8 +1,13 @@
 export const api_host = 'http://127.0.0.1:8000/';
+export const grabit_host = 'http://127.0.0.1:7000/';
 
 const api_base_endpoints = {
     categories: 'api/categories/',
     products: 'api/products/',
+}
+
+const grabit_base_endpoints = {
+    get_product: 'product/data'
 }
 
 const endpoint_suffixes = {
@@ -14,4 +19,9 @@ const api_endpoints = Object.keys(api_base_endpoints).reduce((acc, key) => {
     return acc;
 }, {})
 
-export { api_endpoints, endpoint_suffixes }
+const grabit_endpoints = Object.keys(grabit_base_endpoints).reduce((acc, key) => {
+    acc[key] = `${grabit_host}${grabit_base_endpoints[key]}`
+    return acc;
+}, {})
+
+export { api_endpoints, grabit_endpoints, endpoint_suffixes }

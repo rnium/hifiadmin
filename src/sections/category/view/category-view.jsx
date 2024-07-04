@@ -22,12 +22,14 @@ import ProductTable from 'src/sections/products/product-table-main';
 
 import SpecTable from '../spec-table';
 import AddCatModal from '../add-modal';
+import AddGrabITModal from '../add-grabit-modal';
 
 // ----------------------------------------------------------------------
 
 export default function CategoryPage({ slug }) {
   const [newTableTitle, setNewTableTitle] = useState('');
   const [addCategoryModalOpen, setAddCategoryModalOpen] = useState(false);
+  const [grabitModalOpen, setGrabitModalOpen] = useState(false);
   const newTable = () => (
     {
       title: newTableTitle,
@@ -166,7 +168,7 @@ export default function CategoryPage({ slug }) {
                   variant='h6'
                   sx={{ mt: 3 }}
                 >
-                  Configuration Tables
+                  Configuration Tables ({values.table.length})
                 </Typography>
                 <FieldArray name='table'>
                   {
@@ -187,6 +189,11 @@ export default function CategoryPage({ slug }) {
                             />
                           ))
                         }
+                        <AddGrabITModal
+                          open={grabitModalOpen}
+                          setOpen={setGrabitModalOpen}
+                          push={push}
+                        />
                         <Stack
                           spacing={2}
                           sx={{ my: 3 }}
@@ -205,10 +212,17 @@ export default function CategoryPage({ slug }) {
                             />
                             <Button
                               onClick={() => push(newTable())}
-                              variant='outlined'
+                              variant='contained'
                               disabled={newTableTitle.length === 0}
                             >
                               Add Table
+                            </Button>
+                            <Button
+                              onClick={() => setGrabitModalOpen(true)}
+                              variant='outlined'
+                              color='info'
+                            >
+                              Grabit
                             </Button>
                           </Stack>
                           <Button 

@@ -43,11 +43,16 @@ export const useGet = (url, auth_required = true) => {
 
 
     const perform_get = useCallback(async (params = {}) => {
+        setSuccess(false);
+        setError(null);
+        setData(null);
+        setLoaded(false);
+        setLoading(true);
         let headers = {}
         if (auth_required) {
             headers.Authorization = `Token ${localStorage.getItem('hifi_admin_t')}`
         }
-        setLoading(true);
+        
         try {
             let res = await axios.get(url, {
                 params, headers
@@ -63,5 +68,14 @@ export const useGet = (url, auth_required = true) => {
             setLoaded(true);
         }
     }, [url, auth_required])
-    return { data, loaded, setLoaded, loading, success, error, perform_get };
+
+    const reset = useCallback(() => {
+        setData(null);
+        setLoaded(false);
+        setLoading(false);
+        setSuccess(false);
+        setError(false);
+    })
+
+    return { data, loaded, setLoaded, loading, success, error, perform_get, reset };
 }
