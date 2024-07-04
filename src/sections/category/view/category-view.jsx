@@ -87,14 +87,7 @@ export default function CategoryPage({ slug }) {
     )
   }
 
-  let currentParent = data?.parent;
-  const parents = [];
-  while (currentParent) {
-    parents.push(currentParent);
-    currentParent = currentParent?.parent;
-  }
-
-  console.log(parents);
+  
   return (
     <>
       <AddCatModal
@@ -106,27 +99,24 @@ export default function CategoryPage({ slug }) {
       />
       <Container>
         {
-          parents.length > 0 ?
+          data.category_tree.length > 1 ?
             <Stack
               alignItems='center'
             >
               <Breadcrumbs aria-label="breadcrumb">
                 {
-                  parents.reverse().map((p, idx) => (
+                  data.category_tree.map((p, idx) => (
                     <Link
                       key={idx}
                       to={`/category/${p.slug}`}
                       style={{ textDecoration: 'none' }}
                     >
-                      <MUILink color='text.secondary' style={{ textDecoration: 'none' }}>
+                      <MUILink color={p.id === data.id ? 'primary' : 'text.secondary'} style={{ textDecoration: 'none' }}>
                         {p.title}
                       </MUILink>
                     </Link>
                   ))
                 }
-                <MUILink color='primary' style={{ textDecoration: 'none' }}>
-                  {data.title}
-                </MUILink>
               </Breadcrumbs>
             </Stack> : null
         }
