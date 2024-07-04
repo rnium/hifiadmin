@@ -69,7 +69,7 @@ function AddGrabITModal({ open, setOpen, push }) {
                         <Alert
                             severity='success'
                         >
-                            Product Found for query: {query}
+                            Product Found
                         </Alert> : null
                 }
                 {

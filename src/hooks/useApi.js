@@ -48,7 +48,7 @@ export const useGet = (url, auth_required = true) => {
         setData(null);
         setLoaded(false);
         setLoading(true);
-        let headers = {}
+        let headers = {};
         if (auth_required) {
             headers.Authorization = `Token ${localStorage.getItem('hifi_admin_t')}`
         }
