@@ -87,7 +87,7 @@ export default function CategoryPage({ slug }) {
     )
   }
 
-  
+
   return (
     <>
       <AddCatModal
@@ -194,6 +194,18 @@ export default function CategoryPage({ slug }) {
                 >
                   Configuration Tables ({values.table.length})
                 </Typography>
+                <Tooltip
+                  title="All these tables will be used in all the products of the current category"
+                  arrow
+                >
+                  <Typography
+                    textAlign="center"
+                    variant='body2'
+                    color='text.secondary'
+                  >
+                    Tables in the tree ({data.tree_tables?.length || 0})
+                  </Typography>
+                </Tooltip>
                 <FieldArray name='table'>
                   {
                     ({ push, remove }) => (
