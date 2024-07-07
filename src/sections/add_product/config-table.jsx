@@ -18,24 +18,29 @@ function ConfigTable(
         <Card sx={{ px: 3, py: 3, ...sx }}>
             <Stack
                 direction='row'
-                justifyContent='space-between'
+                justifyContent='flex-start'
+                spacing={1}
 
             >
+                <Typography variant='h6' color="text.secondary">
+                    {tableIndex + 1}.
+                </Typography>
                 <Typography variant='h6' color="primary">
                     {tableData.title}
                 </Typography>
             </Stack>
             <Stack
                 spacing={1}
-                sx={{mt: 2}}
+                sx={{ mt: 2 }}
             >
-            {
+                {
                     tableData.specs.map((spec, idx) => {
                         const spec_value = `table[${tableIndex}].specs[${idx}].value`;
                         const value_error = getIn(errors, spec_value);
                         const value_touched = getIn(touched, spec_value);
                         return (
                             <TextField
+                                key={idx}
                                 label={spec.title}
                                 fullWidth
                                 variant='outlined'

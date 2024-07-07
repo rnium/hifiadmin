@@ -1,58 +1,41 @@
 import * as Yup from 'yup';
-import { useState } from 'react';
 import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
 import { Form, getIn, Formik, FieldArray } from 'formik'
 
 import {
   Box, Chip, Card, Grid, Stack, Button, Container, TextField, Typography,
 } from '@mui/material';
 
+import { useGet } from 'src/hooks/useApi';
+
+import { api_endpoints } from 'src/utils/data';
+
 import { all_tags } from 'src/_mock/products';
+import Loading from 'src/layouts/dashboard/common/loading';
 
 import ConfigTable from '../config-table';
 import AddTagModal from '../add-tag-modal';
 import ProductImages from '../product-images';
 import KeyFeatureTable from '../keyfeature-table';
 
-const tables = [
-  {
-    id: 1,
-    title: 'Table1 Demo',
-    specs: [
-      {
-        id: 97,
-        title: 'Demo Spec 1',
-        value: ''
-      },
-      {
-        id: 98,
-        title: 'Demo Spec 2',
-        value: ''
-      },
-    ]
-  },
-  {
-    id: 2,
-    title: 'Table2 Demo',
-    specs: [
-      {
-        id: 99,
-        title: 'Demo Spec 3',
-        value: ''
-      },
-      {
-        id: 100,
-        title: 'Demo Spec 4',
-        value: ''
-      },
-    ]
-  }
-]
-
 
 function AddProductView({ slug }) {
   const [images, setImages] = useState([])
   const [tagsModalOpen, setTagsModalOpen] = useState(false);
+  const { data, loaded, reset, error, perform_get } = useGet(`${api_endpoints.categories}${slug}`);
+
+  useEffect(() => {
+    if (!loaded) {
+      perform_get();
+    }
+  }, [perform_get, loaded])
+
+  if (!loaded || error) {
+    return (
+      <Loading sx={{ mt: '5vh' }} size='large' />
+    )
+  }
 
   const validationSchema = Yup.object({
     product_title: Yup.string().required("Title is required"),
@@ -66,9 +49,21 @@ function AddProductView({ slug }) {
     ),
   })
 
+  const data_tables = data?.tree_tables.map(tbl => ({
+    id: tbl.id,
+    title: tbl.title,
+    specs: tbl.specs.map(spec => ({
+      id: spec.id,
+      title: spec.title,
+      value: ''
+    }))
+  }))
+
+  console.log(data_tables);
+
   return (
     <Container>
-      <Typography variant='h4'>Add New Product in <Typography variant='h4' color="secondary" component="span">{slug}</Typography> Category</Typography>
+      <Typography variant='h4'>Add New Product in <Typography variant='h4' color="secondary" component="span">{data.title}</Typography> Category</Typography>
       <Formik
         initialValues={{
           product_title: '',
@@ -82,12 +77,14 @@ function AddProductView({ slug }) {
               value: '',
             }
           ],
-          table: tables
+          table: data_tables
         }}
         validationSchema={validationSchema}
         onSubmit={values => {
           console.log(values);
         }}
+        validateOnChange={false}
+        validateOnBlur={false}
       >
         {
           ({ values, touched, errors, handleChange, handleBlur }) => {
