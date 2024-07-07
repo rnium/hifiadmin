@@ -12,6 +12,7 @@ import { all_tags } from 'src/_mock/products';
 import ConfigTable from '../config-table';
 import AddTagModal from '../add-tag-modal';
 import ProductImages from '../product-images';
+import KeyFeatureTable from '../keyfeature-table';
 
 
 function AddProductView({ slug }) {
@@ -39,7 +40,6 @@ function AddProductView({ slug }) {
     key_features: Yup.array(
       Yup.object({
         label: Yup.string().required('Title is required'),
-        value: Yup.string().required('Value is required'),
       })
     ),
     table: Yup.array(
@@ -218,12 +218,9 @@ function AddProductView({ slug }) {
                     </Grid>
                   </Grid>
                 </Card>
-                <ConfigTable
-                  kf_table
+                <KeyFeatureTable
                   tableData={{ specs: values.key_features }}
-                  tableIndex={0}
                   sx={{ mt: 2 }}
-                  handleRemove={null}
                   touched={touched}
                   errors={errors}
                   handleChange={handleChange}
