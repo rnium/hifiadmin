@@ -14,23 +14,45 @@ import AddTagModal from '../add-tag-modal';
 import ProductImages from '../product-images';
 import KeyFeatureTable from '../keyfeature-table';
 
+const tables = [
+  {
+    id: 1,
+    title: 'Table1 Demo',
+    specs: [
+      {
+        id: 97,
+        title: 'Demo Spec 1',
+        value: ''
+      },
+      {
+        id: 98,
+        title: 'Demo Spec 2',
+        value: ''
+      },
+    ]
+  },
+  {
+    id: 2,
+    title: 'Table2 Demo',
+    specs: [
+      {
+        id: 99,
+        title: 'Demo Spec 3',
+        value: ''
+      },
+      {
+        id: 100,
+        title: 'Demo Spec 4',
+        value: ''
+      },
+    ]
+  }
+]
+
 
 function AddProductView({ slug }) {
   const [images, setImages] = useState([])
-  const [newTableTitle, setNewTableTitle] = useState('');
   const [tagsModalOpen, setTagsModalOpen] = useState(false);
-
-  const newTable = () => (
-    {
-      title: newTableTitle,
-      specs: [
-        {
-          label: '',
-          value: '',
-        }
-      ]
-    }
-  )
 
   const validationSchema = Yup.object({
     product_title: Yup.string().required("Title is required"),
@@ -42,17 +64,6 @@ function AddProductView({ slug }) {
         label: Yup.string().required('Title is required'),
       })
     ),
-    table: Yup.array(
-      Yup.object({
-        title: Yup.string().required("Table title is required"),
-        specs: Yup.array(
-          Yup.object({
-            label: Yup.string().required('Title is required'),
-            value: Yup.string().required('Value is required'),
-          })
-        )
-      })
-    )
   })
 
   return (
@@ -71,26 +82,7 @@ function AddProductView({ slug }) {
               value: '',
             }
           ],
-          table: [
-            {
-              title: 'Tbl 1',
-              specs: [
-                {
-                  label: '',
-                  value: '',
-                }
-              ]
-            },
-            {
-              title: 'Tbl 2',
-              specs: [
-                {
-                  label: '',
-                  value: '',
-                }
-              ]
-            },
-          ]
+          table: tables
         }}
         validationSchema={validationSchema}
         onSubmit={values => {
@@ -226,59 +218,29 @@ function AddProductView({ slug }) {
                   handleChange={handleChange}
                   handleBlur={handleBlur}
                 />
-                <FieldArray name='table'>
-                  {
-                    ({ push, remove }) => (
-                      <>
-                        <Stack
-                          spacing={2}
-                          sx={{ my: 5 }}
-                        >
-                          <Typography
-                            textAlign="center"
-                            variant='h6'
-                          >
-                            Configuration Tables
-                          </Typography>
-                          <Stack
-                            direction="row"
-                            spacing={2}
-                            justifyContent="center"
-                          >
-                            <TextField
-                              onChange={e => setNewTableTitle(e.target.value)}
-                              label="New Table Name"
-                            />
-                            <Button
-                              onClick={() => push(newTable())}
-                              variant='contained'
-                              disabled={newTableTitle.length === 0}
-                            >
-                              Add Table
-                            </Button>
-                          </Stack>
-                        </Stack>
-                        {
-                          values.table.map((tbl, idx) => (
-                            <ConfigTable
-                              key={`table[${idx}]`}
-                              tableData={tbl}
-                              tableIndex={idx}
-                              sx={{ mt: 2 }}
-                              handleRemove={() => remove(idx)}
-                              touched={touched}
-                              errors={errors}
-                              handleChange={handleChange}
-                              handleBlur={handleBlur}
-                            />
-                          ))
-                        }
-                      </>
-                    )
-                  }
-                </FieldArray>
+                <Typography
+                  textAlign="center"
+                  variant='h6'
+                  sx={{mt: 4}}
+                >
+                  Product Configurations
+                </Typography>
+                {
+                  values.table.map((tbl, idx) => (
+                    <ConfigTable
+                      key={`table[${idx}]`}
+                      tableData={tbl}
+                      tableIndex={idx}
+                      sx={{ mt: 2 }}
+                      touched={touched}
+                      errors={errors}
+                      handleChange={handleChange}
+                      handleBlur={handleBlur}
+                    />
+                  ))
+                }
                 <Card
-                  sx={{p: 2, mt: 3}}
+                  sx={{ p: 2, mt: 3 }}
                 >
                   <Box>
                     <TextField
