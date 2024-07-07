@@ -12,11 +12,11 @@ function AddTagModal({ open, setOpen, all_tags, added_tags, push, remove }) {
         setSearchRes(all_tags.filter(tag => searchQ.length > 0 && tag.title.toLowerCase().includes(searchQ)));
     }, [searchQ, all_tags])
 
-    const handleBtnClick = (e, slug) => {
-        if (added_tags.includes(slug)) {
-            remove(added_tags.indexOf(slug));
+    const handleBtnClick = (e, id) => {
+        if (added_tags.includes(id)) {
+            remove(added_tags.indexOf(id));
         } else {
-            push(slug);
+            push(id);
         }
     }
 
@@ -49,8 +49,8 @@ function AddTagModal({ open, setOpen, all_tags, added_tags, push, remove }) {
                                             <ListItem>
                                                 <ListItemButton
                                                     sx={{ width: '100%', borderRadius: 1 }}
-                                                    onClick={(e) => handleBtnClick(e, s_tag.slug)}
-                                                    selected={added_tags.includes(s_tag.slug)}
+                                                    onClick={(e) => handleBtnClick(e, s_tag.id)}
+                                                    selected={added_tags.includes(s_tag.id)}
                                                 >
                                                     <ListItemText>{s_tag.title}</ListItemText>
                                                 </ListItemButton>

@@ -7,9 +7,9 @@ import {
   Box, Chip, Card, Grid, Stack, Button, Container, TextField, Typography,
 } from '@mui/material';
 
-import { useGet } from 'src/hooks/useApi';
+import { useGet, usePost } from 'src/hooks/useApi';
 
-import { api_endpoints } from 'src/utils/data';
+import { api_endpoints, endpoint_suffixes } from 'src/utils/data';
 
 import { all_tags } from 'src/_mock/products';
 import Loading from 'src/layouts/dashboard/common/loading';
@@ -19,11 +19,27 @@ import AddTagModal from '../add-tag-modal';
 import ProductImages from '../product-images';
 import KeyFeatureTable from '../keyfeature-table';
 
+const addproduct_config = {
+  headers: {
+    'Content-Type': 'multipart/form-data'
+  }
+}
+
+
 
 function AddProductView({ slug }) {
   const [images, setImages] = useState([])
   const [tagsModalOpen, setTagsModalOpen] = useState(false);
   const { data, loaded, reset, error, perform_get } = useGet(`${api_endpoints.categories}${slug}`);
+  const {
+    loading: postingProduct,
+    success: productUpdateSuccess,
+    reset: productUpdateReset,
+    error: productError,
+    setError: setproductError,
+    perform_post: post_product
+  } = usePost(`${api_endpoints.categories}${slug}${endpoint_suffixes.addproduct}`, true, addproduct_config);
+
 
   useEffect(() => {
     if (!loaded) {
@@ -37,10 +53,20 @@ function AddProductView({ slug }) {
     )
   }
 
+  const handleSubmit = values => {
+    const formData = new FormData();
+    formData.append('json', JSON.stringify(values))
+    images.forEach(img => {
+      formData.append('images', img);
+    })
+    console.log(values);
+    post_product(formData);
+  }
+
   const validationSchema = Yup.object({
-    product_title: Yup.string().required("Title is required"),
+    title: Yup.string().required("Title is required"),
     price: Yup.number().required("Price is required").min(0, 'Cannot be less than 0'),
-    discount_price: null,
+    discount: Yup.number(),
     stock_count: Yup.number().required("Stock count is required").min(0, 'Cannot be less than 0'),
     key_features: Yup.array(
       Yup.object({
@@ -59,18 +85,18 @@ function AddProductView({ slug }) {
     }))
   }))
 
-  console.log(data_tables);
-
   return (
     <Container>
       <Typography variant='h4'>Add New Product in <Typography variant='h4' color="secondary" component="span">{data.title}</Typography> Category</Typography>
       <Formik
         initialValues={{
-          product_title: '',
+          category: data.id,
+          title: '',
           price: '',
-          discount_price: '',
+          discount: '',
           stock_count: '',
-          tags: [],
+          details: '',
+          product_tags: [],
           key_features: [
             {
               label: '',
@@ -80,17 +106,16 @@ function AddProductView({ slug }) {
           table: data_tables
         }}
         validationSchema={validationSchema}
-        onSubmit={values => {
-          console.log(values);
-        }}
+        onSubmit={values => handleSubmit(values)}
         validateOnChange={false}
         validateOnBlur={false}
       >
         {
-          ({ values, touched, errors, handleChange, handleBlur }) => {
+          ({ values, touched, errors, handleChange, handleBlur, handleSubmit: submitForm }) => {
             const title_error = getIn(errors, 'product_title');
             const title_touched = getIn(touched, 'product_title');
             const price_error = getIn(errors, 'price');
+            const discount_error = getIn(errors, 'discount');
             const price_touched = getIn(touched, 'price');
             const stock_error = getIn(errors, 'stock_count');
             const stock_touched = getIn(touched, 'stock_count');
@@ -104,7 +129,7 @@ function AddProductView({ slug }) {
                           <TextField
                             fullWidth
                             label="Product Title"
-                            name='product_title'
+                            name='title'
                             variant='filled'
                             multiline
                             rows={2}
@@ -121,6 +146,7 @@ function AddProductView({ slug }) {
                             variant='filled'
                             name='price'
                             label="Original Price"
+                            type='number'
                             value={values.price}
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -132,11 +158,14 @@ function AddProductView({ slug }) {
                           <TextField
                             fullWidth
                             variant='filled'
-                            name='discount_price'
+                            name='discount'
+                            type='number'
                             label="Discount Price"
                             value={values.discount_price}
                             onChange={handleChange}
                             onBlur={handleBlur}
+                            error={Boolean(discount_error)}
+                            helperText={Boolean(discount_error) || ''}
                           />
                         </Grid>
                         <Grid item xs={12} md={4}>
@@ -145,6 +174,7 @@ function AddProductView({ slug }) {
                             variant='filled'
                             name='stock_count'
                             label="Stock Count"
+                            type='number'
                             value={values.stock_count}
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -162,7 +192,7 @@ function AddProductView({ slug }) {
                               mt: 1
                             }}
                           >
-                            <FieldArray name="tags">
+                            <FieldArray name="product_tags">
                               {
                                 ({ push, remove }) => (
                                   <>
@@ -170,15 +200,15 @@ function AddProductView({ slug }) {
                                       open={tagsModalOpen}
                                       setOpen={setTagsModalOpen}
                                       all_tags={all_tags}
-                                      added_tags={values.tags}
+                                      added_tags={values.product_tags}
                                       push={push}
                                       remove={remove}
                                     />
                                     {
-                                      values.tags.map((t, idx) => (
+                                      values.product_tags.map((t, idx) => (
                                         <Chip
                                           key={t}
-                                          label={all_tags.find(tag => tag.slug === t).title}
+                                          label={all_tags.find(tag => tag.id === t).title}
                                           onDelete={() => remove(idx)}
                                         />
                                       ))
@@ -218,7 +248,7 @@ function AddProductView({ slug }) {
                 <Typography
                   textAlign="center"
                   variant='h6'
-                  sx={{mt: 4}}
+                  sx={{ mt: 4 }}
                 >
                   Product Configurations
                 </Typography>
@@ -242,6 +272,8 @@ function AddProductView({ slug }) {
                   <Box>
                     <TextField
                       label="Product Description"
+                      name='details'
+                      onChange={handleChange}
                       fullWidth
                       multiline
                       rows={5}
@@ -249,7 +281,7 @@ function AddProductView({ slug }) {
                   </Box>
                 </Card>
                 <Stack direction='row' justifyContent='flex-end' sx={{ mt: 2 }}>
-                  <Button variant='contained' type='submit' >Add Product</Button>
+                  <Button variant='contained' type='submit'>Add Product</Button>
                 </Stack>
               </Form>
             )

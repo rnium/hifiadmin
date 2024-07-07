@@ -65,19 +65,19 @@ export const products = [...Array(24)].map((_, index) => {
 
 export const all_tags = [
   {
-    slug: 'laptop-all',
+    id: 1,
     title: 'Laptop All'
   },
   {
-    slug: 'laptop-all-asus',
+    id: 2,
     title: 'Asus Laptop'
   },
   {
-    slug: 'laptop-all-lenovo',
+    id: 3,
     title: 'Lenovo Laptop'
   },
   {
-    slug: 'laptop-all-dell',
+    id: 4,
     title: 'Dell Laptop'
   },
 ];

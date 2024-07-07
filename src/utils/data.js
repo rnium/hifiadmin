@@ -11,7 +11,8 @@ const grabit_base_endpoints = {
 }
 
 const endpoint_suffixes = {
-    update_table: '/tables/update/'
+    update_table: '/tables/update/',
+    addproduct: '/addproduct/',
 }
 
 const api_endpoints = Object.keys(api_base_endpoints).reduce((acc, key) => {
