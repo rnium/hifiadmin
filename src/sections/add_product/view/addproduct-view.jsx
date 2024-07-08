@@ -103,7 +103,7 @@ function AddProductView({ slug }) {
               value: '',
             }
           ],
-          table: data_tables
+          tables: data_tables
         }}
         validationSchema={validationSchema}
         onSubmit={values => handleSubmit(values)}
@@ -253,9 +253,9 @@ function AddProductView({ slug }) {
                   Product Configurations
                 </Typography>
                 {
-                  values.table.map((tbl, idx) => (
+                  values.tables.map((tbl, idx) => (
                     <ConfigTable
-                      key={`table[${idx}]`}
+                      key={`tables[${idx}]`}
                       tableData={tbl}
                       tableIndex={idx}
                       sx={{ mt: 2 }}

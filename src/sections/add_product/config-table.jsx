@@ -35,7 +35,7 @@ function ConfigTable(
             >
                 {
                     tableData.specs.map((spec, idx) => {
-                        const spec_value = `table[${tableIndex}].specs[${idx}].value`;
+                        const spec_value = `tables[${tableIndex}].specs[${idx}].value`;
                         const value_error = getIn(errors, spec_value);
                         const value_touched = getIn(touched, spec_value);
                         return (
