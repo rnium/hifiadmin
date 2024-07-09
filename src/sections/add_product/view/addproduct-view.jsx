@@ -1,10 +1,12 @@
 import * as Yup from 'yup';
+import { message } from 'antd';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Form, getIn, Formik, FieldArray } from 'formik'
 
 import {
-  Box, Chip, Card, Grid, Stack, Button, Container, TextField, Typography,
+  Box, Chip, Card, Grid, Stack, Button, Skeleton, Container, TextField, Typography,
 } from '@mui/material';
 
 import { useGet, usePost } from 'src/hooks/useApi';
@@ -28,15 +30,15 @@ const addproduct_config = {
 
 function AddProductView({ slug }) {
   const [images, setImages] = useState([])
+  const navigate = useNavigate();
   const [tagsModalOpen, setTagsModalOpen] = useState(false);
-  const { data, loaded, reset, error, perform_get } = useGet(`${api_endpoints.categories}${slug}`);
+  const { data, loaded, error, perform_get } = useGet(`${api_endpoints.categories}${slug}`);
   const { data: all_tags, loaded: tagsLoaded, perform_get: loadTags } = useGet(`${api_endpoints.categories}?parent=all`, false, []);
   const {
     loading: postingProduct,
-    success: productUpdateSuccess,
-    reset: productUpdateReset,
-    error: productError,
-    setError: setproductError,
+    success: productAddSuccess,
+    reset: productAddReset,
+    error: productAddError,
     perform_post: post_product
   } = usePost(`${api_endpoints.categories}${slug}${endpoint_suffixes.addproduct}`, true, addproduct_config);
 
@@ -45,12 +47,23 @@ function AddProductView({ slug }) {
       loadTags();
     }
   }, [tagsLoaded, loadTags])
-  
+
   useEffect(() => {
     if (!loaded) {
       perform_get();
     }
   }, [perform_get, loaded])
+
+  useEffect(() => {
+    if (productAddSuccess) {
+      message.success("Product added successfully");
+      navigate(`/category/${slug}`);
+    }
+    if (productAddError) {
+      message.error(JSON.stringify(productAddError));
+      productAddReset()
+    }
+  }, [productAddSuccess, productAddError, productAddReset, navigate, slug])
 
   if (!loaded || error) {
     return (
@@ -98,10 +111,10 @@ function AddProductView({ slug }) {
           category: data.id,
           title: '',
           price: '',
-          discount: '',
+          discount: 0,
           stock_count: '',
           details: '',
-          product_tags: [],
+          tags: data?.category_tree.map(cat => cat.id),
           key_features: [
             {
               title: '',
@@ -189,47 +202,60 @@ function AddProductView({ slug }) {
                         </Grid>
                         <Grid item xs={12}>
                           <Typography variant='body1'>Tags</Typography>
-                          <Box
-                            sx={{
-                              display: 'flex',
-                              flexWrap: 'wrap',
-                              gap: 1,
-                              mt: 1
-                            }}
-                          >
-                            <FieldArray name="product_tags">
-                              {
-                                ({ push, remove }) => (
-                                  <>
-                                    <AddTagModal
-                                      open={tagsModalOpen}
-                                      setOpen={setTagsModalOpen}
-                                      all_tags={all_tags}
-                                      added_tags={values.product_tags}
-                                      push={push}
-                                      remove={remove}
-                                    />
-                                    {
-                                      values.product_tags.map((t, idx) => (
-                                        <Chip
-                                          key={t}
-                                          label={all_tags.find(tag => tag.id === t).title}
-                                          onDelete={() => remove(idx)}
+                          {
+                            !tagsLoaded ?
+                              <Stack
+                                sx={{ mt: 1 }}
+                                spacing={1}
+                                direction='row'
+                              >
+                                <Skeleton variant='rounded' width={100} height={25} />
+                                <Skeleton variant='rounded' width={100} height={25} />
+                                <Skeleton variant='rounded' width={100} height={25} />
+                                <Skeleton variant='rounded' width={100} height={25} />
+                              </Stack> :
+                              <Box
+                                sx={{
+                                  display: 'flex',
+                                  flexWrap: 'wrap',
+                                  gap: 1,
+                                  mt: 1
+                                }}
+                              >
+                                <FieldArray name="tags">
+                                  {
+                                    ({ push, remove }) => (
+                                      <>
+                                        <AddTagModal
+                                          open={tagsModalOpen}
+                                          setOpen={setTagsModalOpen}
+                                          all_tags={all_tags}
+                                          added_tags={values.tags}
+                                          push={push}
+                                          remove={remove}
                                         />
-                                      ))
-                                    }
-                                  </>
-                                )
-                              }
+                                        {
+                                          values.tags.map((t, idx) => (
+                                            <Chip
+                                              key={t}
+                                              label={all_tags.find(tag => tag.id === t).title}
+                                              onDelete={() => remove(idx)}
+                                            />
+                                          ))
+                                        }
+                                      </>
+                                    )
+                                  }
 
-                            </FieldArray>
-                            <Chip
-                              variant='contained'
-                              color='primary'
-                              label="Add Tag"
-                              onClick={() => setTagsModalOpen(true)}
-                            />
-                          </Box>
+                                </FieldArray>
+                                <Chip
+                                  variant='contained'
+                                  color='primary'
+                                  label="Add Tag"
+                                  onClick={() => setTagsModalOpen(true)}
+                                />
+                              </Box>
+                          }
                         </Grid>
                       </Grid>
                     </Grid>
@@ -286,7 +312,7 @@ function AddProductView({ slug }) {
                   </Box>
                 </Card>
                 <Stack direction='row' justifyContent='flex-end' sx={{ mt: 2 }}>
-                  <Button variant='contained' type='submit' onClick={() => console.log(errors)}>Add Product</Button>
+                  <Button disabled={postingProduct} variant='contained' type='submit' onClick={() => console.log(errors)}>Add Product</Button>
                 </Stack>
               </Form>
             )
