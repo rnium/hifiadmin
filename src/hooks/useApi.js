@@ -40,8 +40,8 @@ export const usePost = (url, auth_required = true, config = postDefaultConfig) =
     return { data, loading, success, setSuccess, error, setError, perform_post, reset };
 }
 
-export const useGet = (url, auth_required = true) => {
-    const [data, setData] = useState(null);
+export const useGet = (url, auth_required = true, defaultData = null) => {
+    const [data, setData] = useState(defaultData);
     const [loaded, setLoaded] = useState(false);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);

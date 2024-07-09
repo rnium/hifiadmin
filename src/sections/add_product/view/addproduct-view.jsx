@@ -11,7 +11,6 @@ import { useGet, usePost } from 'src/hooks/useApi';
 
 import { api_endpoints, endpoint_suffixes } from 'src/utils/data';
 
-import { all_tags } from 'src/_mock/products';
 import Loading from 'src/layouts/dashboard/common/loading';
 
 import ConfigTable from '../config-table';
@@ -31,6 +30,7 @@ function AddProductView({ slug }) {
   const [images, setImages] = useState([])
   const [tagsModalOpen, setTagsModalOpen] = useState(false);
   const { data, loaded, reset, error, perform_get } = useGet(`${api_endpoints.categories}${slug}`);
+  const { data: all_tags, loaded: tagsLoaded, perform_get: loadTags } = useGet(`${api_endpoints.categories}?parent=all`, false, []);
   const {
     loading: postingProduct,
     success: productUpdateSuccess,
@@ -40,7 +40,12 @@ function AddProductView({ slug }) {
     perform_post: post_product
   } = usePost(`${api_endpoints.categories}${slug}${endpoint_suffixes.addproduct}`, true, addproduct_config);
 
-
+  useEffect(() => {
+    if (!tagsLoaded) {
+      loadTags();
+    }
+  }, [tagsLoaded, loadTags])
+  
   useEffect(() => {
     if (!loaded) {
       perform_get();
@@ -70,7 +75,7 @@ function AddProductView({ slug }) {
     stock_count: Yup.number().required("Stock count is required").min(0, 'Cannot be less than 0'),
     key_features: Yup.array(
       Yup.object({
-        label: Yup.string().required('Title is required'),
+        title: Yup.string().required('Title is required'),
       })
     ),
   })
@@ -99,7 +104,7 @@ function AddProductView({ slug }) {
           product_tags: [],
           key_features: [
             {
-              label: '',
+              title: '',
               value: '',
             }
           ],
@@ -281,7 +286,7 @@ function AddProductView({ slug }) {
                   </Box>
                 </Card>
                 <Stack direction='row' justifyContent='flex-end' sx={{ mt: 2 }}>
-                  <Button variant='contained' type='submit'>Add Product</Button>
+                  <Button variant='contained' type='submit' onClick={() => console.log(errors)}>Add Product</Button>
                 </Stack>
               </Form>
             )

@@ -30,10 +30,10 @@ function KeyFeatureTable(
                         <Box>
                             {
                                 tableData.specs.map((spec, idx) => {
-                                    const spec_label = `key_features[${idx}].label`;
+                                    const spec_title = `key_features[${idx}].title`;
                                     const spec_value = `key_features[${idx}].value`;
-                                    const label_error = getIn(errors, spec_label);
-                                    const label_touched = getIn(touched, spec_label);
+                                    const label_error = getIn(errors, spec_title);
+                                    const label_touched = getIn(touched, spec_title);
                                     const value_error = getIn(errors, spec_value);
                                     const value_touched = getIn(touched, spec_value);
                                     return (
@@ -43,7 +43,7 @@ function KeyFeatureTable(
                                                     label="Feature Title"
                                                     fullWidth
                                                     variant='standard'
-                                                    name={spec_label}
+                                                    name={spec_title}
                                                     onChange={handleChange}
                                                     value={spec.label}
                                                     onBlur={handleBlur}
@@ -78,7 +78,7 @@ function KeyFeatureTable(
                                 variant='outlined'
                                 color='success'
                                 size='small'
-                                onClick={() => { push({ label: '', value: '' }) }}
+                                onClick={() => { push({ title: '', value: '' }) }}
                             >
                                 Add Feature Row
                             </Button>
