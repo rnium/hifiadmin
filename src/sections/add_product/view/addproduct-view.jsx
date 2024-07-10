@@ -16,6 +16,7 @@ import { api_endpoints, endpoint_suffixes } from 'src/utils/data';
 import Loading from 'src/layouts/dashboard/common/loading';
 
 import ConfigTable from '../config-table';
+import GrabitModal from '../grabit-modal';
 import AddTagModal from '../add-tag-modal';
 import ProductImages from '../product-images';
 import KeyFeatureTable from '../keyfeature-table';
@@ -32,6 +33,7 @@ function AddProductView({ slug }) {
   const [images, setImages] = useState([])
   const navigate = useNavigate();
   const [tagsModalOpen, setTagsModalOpen] = useState(false);
+  const [gabitModalOpen, setGrabitModalOpen] = useState(true);
   const { data, loaded, error, perform_get } = useGet(`${api_endpoints.categories}${slug}`);
   const { data: all_tags, loaded: tagsLoaded, perform_get: loadTags } = useGet(`${api_endpoints.categories}?parent=all`, false, []);
   const {
@@ -42,6 +44,23 @@ function AddProductView({ slug }) {
     perform_post: post_product
   } = usePost(`${api_endpoints.categories}${slug}${endpoint_suffixes.addproduct}`, true, addproduct_config);
 
+  const [initialValues, setInitialValues] = useState({
+    category: null,
+    title: '',
+    price: '',
+    discount: 0,
+    stock_count: '',
+    details: '',
+    tags: [],
+    key_features: [
+      {
+        title: '',
+        value: '',
+      }
+    ],
+    tables: []
+  })
+
   useEffect(() => {
     if (!tagsLoaded) {
       loadTags();
@@ -51,8 +70,23 @@ function AddProductView({ slug }) {
   useEffect(() => {
     if (!loaded) {
       perform_get();
+    } else {
+      const dat = data;
+      setInitialValues({
+        ...initialValues,
+        tags: dat?.category_tree.map(cat => cat.id),
+        tables: dat?.tree_tables.map(tbl => ({
+          id: tbl.id,
+          title: tbl.title,
+          specs: tbl.specs.map(spec => ({
+            id: spec.id,
+            title: spec.title,
+            value: ''
+          }))
+        }))
+      })
     }
-  }, [perform_get, loaded])
+  }, [perform_get, loaded, data])
 
   useEffect(() => {
     if (productAddSuccess) {
@@ -93,43 +127,30 @@ function AddProductView({ slug }) {
     ),
   })
 
-  const data_tables = data?.tree_tables.map(tbl => ({
-    id: tbl.id,
-    title: tbl.title,
-    specs: tbl.specs.map(spec => ({
-      id: spec.id,
-      title: spec.title,
-      value: ''
-    }))
-  }))
-
   return (
     <Container>
-      <Typography variant='h4'>Add New Product in <Typography variant='h4' color="secondary" component="span">{data.title}</Typography> Category</Typography>
+      <Stack
+        direction='row'
+        justifyContent='space-between'
+      >
+        <Typography variant='h4'>Add New Product in <Typography variant='h4' color="secondary" component="span">{data.title}</Typography> Category</Typography>
+        <Button
+          variant='outlined'
+          onClick={() => setGrabitModalOpen(true)}
+        >
+          GrabIT
+        </Button>
+      </Stack>
       <Formik
-        initialValues={{
-          category: data.id,
-          title: '',
-          price: '',
-          discount: 0,
-          stock_count: '',
-          details: '',
-          tags: data?.category_tree.map(cat => cat.id),
-          key_features: [
-            {
-              title: '',
-              value: '',
-            }
-          ],
-          tables: data_tables
-        }}
+        enableReinitialize
+        initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={values => handleSubmit(values)}
         validateOnChange={false}
         validateOnBlur={false}
       >
         {
-          ({ values, touched, errors, handleChange, handleBlur, handleSubmit: submitForm }) => {
+          ({ values, touched, errors, handleChange, setFieldValue, handleBlur }) => {
             const title_error = getIn(errors, 'product_title');
             const title_touched = getIn(touched, 'product_title');
             const price_error = getIn(errors, 'price');
@@ -139,6 +160,12 @@ function AddProductView({ slug }) {
             const stock_touched = getIn(touched, 'stock_count');
             return (
               <Form noValidate>
+                <GrabitModal
+                  open={gabitModalOpen}
+                  setOpen={setGrabitModalOpen}
+                  values={values}
+                  setInitialValues={setInitialValues}
+                />
                 <Card sx={{ px: 2, py: 3, mt: 1 }}>
                   <Grid container spacing={2}>
                     <Grid item xs={12} md={8}>
@@ -268,6 +295,7 @@ function AddProductView({ slug }) {
                     </Grid>
                   </Grid>
                 </Card>
+                <Button onClick={() => setFieldValue('title', 'foobar')}>Add</Button>
                 <KeyFeatureTable
                   tableData={{ specs: values.key_features }}
                   sx={{ mt: 2 }}

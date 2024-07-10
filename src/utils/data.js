@@ -8,7 +8,8 @@ const api_base_endpoints = {
 }
 
 const grabit_base_endpoints = {
-    get_product: 'product/data'
+    get_product: 'product/data',
+    search_product: 'product/search',
 }
 
 const endpoint_suffixes = {
