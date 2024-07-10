@@ -13,7 +13,6 @@ import { useGet, usePost } from 'src/hooks/useApi';
 
 import { api_endpoints, endpoint_suffixes } from 'src/utils/data';
 
-import { products } from 'src/_mock/products';
 import Loading from 'src/layouts/dashboard/common/loading';
 
 import Iconify from 'src/components/iconify';
@@ -50,6 +49,12 @@ export default function CategoryPage({ slug }) {
     perform_get: load_cat_products,
     reset: resetCatProducts
   } = useGet(`${api_endpoints.categories}${slug}${endpoint_suffixes.products}`, false, []);
+  const { 
+    data: tagged_cat_products, 
+    loaded: tagged_cat_products_loaded, 
+    perform_get: load_tagged_cat_products,
+    reset: resetTaggedCatProducts
+  } = useGet(`${api_endpoints.tags}${slug}${endpoint_suffixes.products}`, false, []);
 
   const { loading: postingTable, success: tableUpdateSuccess, reset: tableUpdateReset, error: tableError, setError: setTableError, perform_post: post_table } = usePost(`${api_endpoints.categories}${slug}${endpoint_suffixes.update_table}`)
 
@@ -60,12 +65,16 @@ export default function CategoryPage({ slug }) {
     if (!cat_products_loaded) {
       load_cat_products();
     }
-  }, [loaded, perform_get, cat_products_loaded, load_cat_products])
+    if (!tagged_cat_products_loaded) {
+      load_tagged_cat_products();
+    }
+  }, [loaded, perform_get, cat_products_loaded, load_cat_products, tagged_cat_products_loaded, load_tagged_cat_products])
 
   useEffect(() => {
     reset();
     resetCatProducts();
-  }, [slug, reset, resetCatProducts])
+    resetTaggedCatProducts();
+  }, [slug, reset, resetCatProducts, resetTaggedCatProducts])
 
   useEffect(() => {
     if (tableUpdateSuccess) {
@@ -185,7 +194,32 @@ export default function CategoryPage({ slug }) {
 
         </Box>
         <Divider sx={{ my: 1 }} />
-
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          mt={3}
+          mb={2}
+        >
+          <Typography variant="h4">Products in {data?.title} </Typography>
+          <Link to={`/category/${slug}/addproduct`}>
+            <Button color="success" variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+              New Product
+            </Button>
+          </Link>
+        </Stack>
+        <ProductTable products={cat_products} />
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          mt={3}
+          mb={2}
+        >
+          <Typography variant="h4">Tagged Products of {data?.title} </Typography>
+        </Stack>
+        <ProductTable products={tagged_cat_products} />
+        {/* <Divider sx={{ my: 1.5 }} /> */}
         <Formik
           initialValues={{
             table: data?.tables || []
@@ -288,22 +322,7 @@ export default function CategoryPage({ slug }) {
             )
           }
         </Formik>
-        <Divider />
-        <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
-          mt={3}
-          mb={2}
-        >
-          <Typography variant="h4">All Products of {data?.title} Category</Typography>
-          <Link to={`/category/${slug}/addproduct`}>
-            <Button color="success" variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-              New Product
-            </Button>
-          </Link>
-        </Stack>
-        <ProductTable products={cat_products} />
+        
 
       </Container>
     </>

@@ -178,7 +178,7 @@ function AddProductView({ slug }) {
                             variant='filled'
                             name='discount'
                             type='number'
-                            label="Discount Price"
+                            label="Discount Amount"
                             value={values.discount_price}
                             onChange={handleChange}
                             onBlur={handleBlur}
