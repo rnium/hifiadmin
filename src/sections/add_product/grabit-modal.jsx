@@ -1,21 +1,53 @@
+import { useState } from "react";
 import propTypes from 'prop-types';
 import { Modal, Empty } from "antd";
-import { useState } from "react";
+
 import { grabit_endpoints } from 'src/utils/data';
 
 import { useGet } from 'src/hooks/useApi';
 
-import { Box, List, Button, Divider, ListItem, TextField, ListItemText, ListItemButton, Stack } from "@mui/material";
+import { Box, List, Stack, Button, Divider, ListItem, TextField, ListItemText, ListItemButton } from "@mui/material";
 
-const insertTitle = (title, setter) => {
-    console.log('setting title');
-    setter('title', title)
+function isObject(variable) {
+    return variable !== null && typeof variable === 'object' && !Array.isArray(variable);
 }
 
-const insertValues = (setter, prevValues, newData) => {
-    setter({
+// const getImageBlobs = urls => {
+//     let img_arr = Promise.all(
+//         urls.map(url => {
+//             fetch(url)
+//                 .then(response = response.blob)
+//                 .catch(err => console.log(err))
+//         })
+//     )
+//     img_arr.then(blobs => console.log(blobs)).catch(err => console.error(err))
+// }
+
+const getKFTableData = (data) => {
+    let tbl_array = [];
+    if (Array.isArray(data)) {
+        tbl_array = data.map(d => ({
+            title: d,
+            value: '',
+        }))
+    } else if (isObject(data)) {
+        tbl_array = Object.keys(data).map(key => ({
+            title: key,
+            value: data[key],
+        }))
+    }
+    return tbl_array
+}
+
+const insertValues = (setState, prevValues, newData) => {
+    // getImageBlobs(newData.images);
+    setState({
         ...prevValues,
-        title: 'Foobar'
+        title: newData.title,
+        price: newData.prices.original,
+        discount: newData.prices.original - newData.prices.current,
+        details: newData.description,
+        key_features: getKFTableData(newData.key_features)
     })
 }
 

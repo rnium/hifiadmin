@@ -175,12 +175,12 @@ function AddProductView({ slug }) {
                         <Grid item xs={12}>
                           <TextField
                             fullWidth
+                            multiline
+                            rows={2}
                             label="Product Title"
                             name='title'
                             variant='filled'
-                            multiline
-                            rows={2}
-                            value={values.product_title}
+                            value={values.title}
                             onChange={handleChange}
                             onBlur={handleBlur}
                             error={title_touched && Boolean(title_error)}
@@ -297,7 +297,6 @@ function AddProductView({ slug }) {
                     </Grid>
                   </Grid>
                 </Card>
-                <Button onClick={() => setInitialValues({...initialValues, title: 'hasda'})}>Add</Button>
                 <KeyFeatureTable
                   tableData={{ specs: values.key_features }}
                   sx={{ mt: 2 }}

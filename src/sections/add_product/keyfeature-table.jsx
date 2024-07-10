@@ -45,7 +45,7 @@ function KeyFeatureTable(
                                                     variant='standard'
                                                     name={spec_title}
                                                     onChange={handleChange}
-                                                    value={spec.label}
+                                                    value={spec.title}
                                                     onBlur={handleBlur}
                                                     error={label_touched && Boolean(label_error)}
                                                     helperText={label_touched && Boolean(label_error) ? label_error : ""}
