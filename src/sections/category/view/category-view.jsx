@@ -44,17 +44,28 @@ export default function CategoryPage({ slug }) {
     }
   )
   const { data, loaded, reset, error, perform_get } = useGet(`${api_endpoints.categories}${slug}`);
+  const { 
+    data: cat_products, 
+    loaded: cat_products_loaded, 
+    perform_get: load_cat_products,
+    reset: resetCatProducts
+  } = useGet(`${api_endpoints.categories}${slug}${endpoint_suffixes.products}`, false, []);
+
   const { loading: postingTable, success: tableUpdateSuccess, reset: tableUpdateReset, error: tableError, setError: setTableError, perform_post: post_table } = usePost(`${api_endpoints.categories}${slug}${endpoint_suffixes.update_table}`)
 
   useEffect(() => {
     if (!loaded) {
       perform_get();
     }
-  }, [perform_get, loaded])
+    if (!cat_products_loaded) {
+      load_cat_products();
+    }
+  }, [loaded, perform_get, cat_products_loaded, load_cat_products])
 
   useEffect(() => {
     reset();
-  }, [slug, reset])
+    resetCatProducts();
+  }, [slug, reset, resetCatProducts])
 
   useEffect(() => {
     if (tableUpdateSuccess) {
@@ -285,14 +296,14 @@ export default function CategoryPage({ slug }) {
           mt={3}
           mb={2}
         >
-          <Typography variant="h4">All Products under {data?.title}</Typography>
+          <Typography variant="h4">All Products of {data?.title} Category</Typography>
           <Link to={`/category/${slug}/addproduct`}>
             <Button color="success" variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
               New Product
             </Button>
           </Link>
         </Stack>
-        <ProductTable products={products} />
+        <ProductTable products={cat_products} />
 
       </Container>
     </>

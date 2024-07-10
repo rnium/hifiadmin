@@ -4,6 +4,7 @@ export const grabit_host = 'http://127.0.0.1:7000/';
 const api_base_endpoints = {
     categories: 'api/categories/',
     products: 'api/products/',
+    tagged: 'api/t/',
 }
 
 const grabit_base_endpoints = {
@@ -12,6 +13,7 @@ const grabit_base_endpoints = {
 
 const endpoint_suffixes = {
     update_table: '/tables/update/',
+    products: '/products/',
     addproduct: '/addproduct/',
 }
 

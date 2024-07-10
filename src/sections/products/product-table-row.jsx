@@ -19,12 +19,12 @@ import Iconify from 'src/components/iconify';
 
 export default function ProductTableRow({
   selected,
-  name,
+  title,
   slug,
   cover,
   price,
   priceSale,
-  stock,
+  in_stock,
   handleClick,
 }) {
   const [open, setOpen] = useState(null);
@@ -47,9 +47,9 @@ export default function ProductTableRow({
         <TableCell component="th" scope="row" padding="none">
           <Link to={`/product/${slug}`} style={{textDecoration: 'none', color: 'initial'}}>
             <Stack direction="row" alignItems="center" spacing={2}>
-              <Avatar alt={name} src={cover} />
+              <Avatar alt={title} src={cover} />
               <Typography variant="subtitle2" noWrap>
-                {name}
+                {title}
               </Typography>
             </Stack>
           </Link>
@@ -60,7 +60,7 @@ export default function ProductTableRow({
         <TableCell>{priceSale || '--'}</TableCell>
 
         <TableCell>
-          <Label color={(stock ? 'success' : 'error')}>{(stock ? 'Stock' : 'Out of stock')}</Label>
+          <Label color={(in_stock ? 'success' : 'error')}>{(in_stock ? 'In Stock' : 'Out of stock')}</Label>
         </TableCell>
 
         <TableCell align="right">
@@ -98,9 +98,9 @@ ProductTableRow.propTypes = {
   selected: PropTypes.any,
   cover: PropTypes.any,
   handleClick: PropTypes.func,
-  name: PropTypes.any,
+  title: PropTypes.any,
   slug: PropTypes.any,
   price: PropTypes.any,
   priceSale: PropTypes.any,
-  stock: PropTypes.bool,
+  in_stock: PropTypes.bool,
 };

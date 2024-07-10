@@ -119,12 +119,12 @@ export default function ProductTable({products, sx}) {
                                 .map((row) => (
                                     <ProductTableRow
                                         key={row.id}
-                                        name={row.name}
-                                        slug={row.id}
+                                        title={row.title}
+                                        slug={row.slug}
                                         price={row.price}
                                         cover={row.cover}
                                         priceSale={row.priceSale}
-                                        stock={false}
+                                        in_stock={row.in_stock}
                                         selected={selected.indexOf(row.name) !== -1}
                                         handleClick={(event) => handleClick(event, row.name)}
                                     />
