@@ -127,6 +127,8 @@ function AddProductView({ slug }) {
     ),
   })
 
+  console.log(initialValues);
+
   return (
     <Container>
       <Stack
@@ -150,7 +152,7 @@ function AddProductView({ slug }) {
         validateOnBlur={false}
       >
         {
-          ({ values, touched, errors, handleChange, setFieldValue, handleBlur }) => {
+          ({ values, touched, errors, handleChange, handleBlur }) => {
             const title_error = getIn(errors, 'product_title');
             const title_touched = getIn(touched, 'product_title');
             const price_error = getIn(errors, 'price');
@@ -295,7 +297,7 @@ function AddProductView({ slug }) {
                     </Grid>
                   </Grid>
                 </Card>
-                <Button onClick={() => setFieldValue('title', 'foobar')}>Add</Button>
+                <Button onClick={() => setInitialValues({...initialValues, title: 'hasda'})}>Add</Button>
                 <KeyFeatureTable
                   tableData={{ specs: values.key_features }}
                   sx={{ mt: 2 }}
@@ -340,7 +342,7 @@ function AddProductView({ slug }) {
                   </Box>
                 </Card>
                 <Stack direction='row' justifyContent='flex-end' sx={{ mt: 2 }}>
-                  <Button disabled={postingProduct} variant='contained' type='submit' onClick={() => console.log(errors)}>Add Product</Button>
+                  <Button disabled={postingProduct} variant='contained' type='submit' onClick={() => console.log(values)}>Add Product</Button>
                 </Stack>
               </Form>
             )
