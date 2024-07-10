@@ -167,6 +167,7 @@ function AddProductView({ slug }) {
                   setOpen={setGrabitModalOpen}
                   values={values}
                   setInitialValues={setInitialValues}
+                  setImages={setImages}
                 />
                 <Card sx={{ px: 2, py: 3, mt: 1 }}>
                   <Grid container spacing={2}>

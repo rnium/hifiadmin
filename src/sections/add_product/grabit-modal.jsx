@@ -12,16 +12,24 @@ function isObject(variable) {
     return variable !== null && typeof variable === 'object' && !Array.isArray(variable);
 }
 
-// const getImageBlobs = urls => {
-//     let img_arr = Promise.all(
-//         urls.map(url => {
-//             fetch(url)
-//                 .then(response = response.blob)
-//                 .catch(err => console.log(err))
-//         })
-//     )
-//     img_arr.then(blobs => console.log(blobs)).catch(err => console.error(err))
-// }
+const getImageBlobs = async urls => {
+    let img_promise = Promise.all(
+        urls.map((url, idx) => {
+            return fetch(`${grabit_endpoints.fetch_img}?url=${url}`)
+                .then(res => res.blob())
+                .then(imgblob => {
+                    const file = new File([imgblob], `downloaded_image_${idx+1}.jpg`, {
+                        type: imgblob.type,
+                        lastModified: Date.now()
+                    })
+                    return file;
+                })
+                .catch(err => console.log(err))
+        })
+    )
+    let img_arr = await img_promise;
+    return img_arr;
+}
 
 const getKFTableData = (data) => {
     let tbl_array = [];
@@ -39,8 +47,9 @@ const getKFTableData = (data) => {
     return tbl_array
 }
 
-const insertValues = (setState, prevValues, newData) => {
-    // getImageBlobs(newData.images);
+const insertValues = async (setState, setImages, prevValues, newData) => {
+    const images = await getImageBlobs(newData.images);
+    setImages(images);
     setState({
         ...prevValues,
         title: newData.title,
@@ -51,7 +60,7 @@ const insertValues = (setState, prevValues, newData) => {
     })
 }
 
-function GrabitModal({ open, setOpen, values, setInitialValues }) {
+function GrabitModal({ open, setOpen, values, setInitialValues, setImages }) {
     const [searchQ, setSearchQ] = useState('');
     const [selectedProdID, setSelectedProdID] = useState(0);
     // const [searchRes, setSearchRes] = useState([]);
@@ -151,7 +160,7 @@ function GrabitModal({ open, setOpen, values, setInitialValues }) {
                             variant='contained'
                             disabled={selectedProdID === 0}
                             color='success'
-                            onClick={() => insertValues(setInitialValues, values, productData)}
+                            onClick={() => insertValues(setInitialValues, setImages, values, productData)}
                         >
                             Insert Data
                         </Button> : null
@@ -167,5 +176,6 @@ GrabitModal.propTypes = {
     open: propTypes.bool,
     setOpen: propTypes.any,
     setInitialValues: propTypes.any,
+    setImages: propTypes.any,
     values: propTypes.any,
 }

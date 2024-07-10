@@ -10,6 +10,7 @@ const api_base_endpoints = {
 const grabit_base_endpoints = {
     get_product: 'product/data',
     search_product: 'product/search',
+    fetch_img: 'product/getimage',
 }
 
 const endpoint_suffixes = {
