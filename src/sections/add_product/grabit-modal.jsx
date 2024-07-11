@@ -50,8 +50,9 @@ const getKFTableData = (data) => {
 
 // const getSpecValue ()
 
-const getSpecTables = (prevValues, tableDataRaw, newData) => {
-    const newDataSpecs = [];
+const getSpecTables = (prevTables, tableDataRaw, newData) => {
+    const mainTableSpecs = [];
+    const specValues = [];
     tableDataRaw.forEach(tbl_dat => {
         const table_specs = [];
         tbl_dat.specs.forEach(spec_dat => {
@@ -60,33 +61,57 @@ const getSpecTables = (prevValues, tableDataRaw, newData) => {
                 aliases: spec_dat.aliases
             })
         })
-        newDataSpecs.push(...table_specs);
+        mainTableSpecs.push(...table_specs);
     })
-    newDataSpecs.forEach(spec => {
-        console.log(spec);
+    Object.keys(newData.spec_tables).forEach(tbl_name => {
+        const table_specs = [];
+        Object.keys(newData.spec_tables[tbl_name]).forEach(spec_title => {
+            table_specs.push({
+                'title': spec_title,
+                'value': newData.spec_tables[tbl_name][spec_title],
+            })
+        })
+        specValues.push(...table_specs);
     })
-    const data = prevValues.tables.map(tbl => ({
+    const getSpecVal = title => {
+        const spec_config = mainTableSpecs.filter(spec => spec.title === title)[0];
+        let spec_search = specValues.filter(spec => spec.title === spec_config.title);
+        if (spec_search.length > 0) return spec_search[0].value;
+        let value = null;
+        spec_config.aliases.forEach(alias => {
+            spec_search = specValues.filter(spec => spec.title === alias);
+            if (spec_search.length > 0) {
+                value = spec_search[0].value;
+            }
+        })
+        return value;
+
+    }
+    const data = prevTables.map(tbl => ({
         ...tbl,
         specs: tbl.specs.map(spec => ({
             ...spec,
-            value: ''
+            value: getSpecVal(spec.title) || ''
         }))
     }))
     return data;
 }
 
 const insertValues = async (catData, setState, setImages, prevValues, newData) => {
-    // const images = await getImageBlobs(newData.images, newData.title);
-    // setImages(images);
-    getSpecTables(prevValues, catData?.tree_tables, newData);
-    setState({
-        ...prevValues,
-        title: newData.title,
-        price: newData.prices.original,
-        discount: newData.prices.original - newData.prices.current,
-        details: newData.description,
-        key_features: getKFTableData(newData.key_features)
-    })
+    const images = await getImageBlobs(newData.images, newData.title);
+    setImages(images);
+    // console.log(newState);
+    setState(prevState => (
+        {
+            ...prevState,
+            title: newData.title,
+            price: newData.prices.original,
+            discount: newData.prices.original - newData.prices.current,
+            details: newData.description,
+            key_features: getKFTableData(newData.key_features),
+            tables: getSpecTables(prevState.tables, catData?.tree_tables, newData)
+        }
+    ))
 }
 
 function GrabitModal({ open, setOpen, values, catData, setInitialValues, setImages }) {

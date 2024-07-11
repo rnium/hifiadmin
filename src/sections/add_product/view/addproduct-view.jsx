@@ -75,6 +75,7 @@ function AddProductView({ slug }) {
       setInitialValues(prevState => (
         {
           ...prevState,
+          category: dat?.id,
           tags: dat?.category_tree.map(cat => cat.id),
           tables: dat?.tree_tables.map(tbl => ({
             id: tbl.id,
