@@ -48,9 +48,37 @@ const getKFTableData = (data) => {
     return tbl_array
 }
 
-const insertValues = async (setState, setImages, prevValues, newData) => {
-    const images = await getImageBlobs(newData.images, newData.title);
-    setImages(images);
+// const getSpecValue ()
+
+const getSpecTables = (prevValues, tableDataRaw, newData) => {
+    const newDataSpecs = [];
+    tableDataRaw.forEach(tbl_dat => {
+        const table_specs = [];
+        tbl_dat.specs.forEach(spec_dat => {
+            table_specs.push({
+                title: spec_dat.title,
+                aliases: spec_dat.aliases
+            })
+        })
+        newDataSpecs.push(...table_specs);
+    })
+    newDataSpecs.forEach(spec => {
+        console.log(spec);
+    })
+    const data = prevValues.tables.map(tbl => ({
+        ...tbl,
+        specs: tbl.specs.map(spec => ({
+            ...spec,
+            value: ''
+        }))
+    }))
+    return data;
+}
+
+const insertValues = async (catData, setState, setImages, prevValues, newData) => {
+    // const images = await getImageBlobs(newData.images, newData.title);
+    // setImages(images);
+    getSpecTables(prevValues, catData?.tree_tables, newData);
     setState({
         ...prevValues,
         title: newData.title,
@@ -61,7 +89,7 @@ const insertValues = async (setState, setImages, prevValues, newData) => {
     })
 }
 
-function GrabitModal({ open, setOpen, values, setInitialValues, setImages }) {
+function GrabitModal({ open, setOpen, values, catData, setInitialValues, setImages }) {
     const [selectedProdID, setSelectedProdID] = useState(0);
     const searchBoxRef = useRef();
     const { data: searchRes, loading, perform_get: getSearchResults } = useGet(grabit_endpoints.search_product, false, []);
@@ -71,8 +99,8 @@ function GrabitModal({ open, setOpen, values, setInitialValues, setImages }) {
         loaded: prodDataLoaded,
         perform_get: grabProdData
     } = useGet(grabit_endpoints.get_product, false);
-    
-    const performSearch = () => getSearchResults({query: searchBoxRef.current.value});
+
+    const performSearch = () => getSearchResults({ query: searchBoxRef.current.value });
 
     return (
         <Modal
@@ -96,7 +124,7 @@ function GrabitModal({ open, setOpen, values, setInitialValues, setImages }) {
                     />
                     <Button
                         variant='contained'
-                        disabled={loading }
+                        disabled={loading}
                         onClick={() => performSearch()}
                     >
                         Search
@@ -162,30 +190,29 @@ function GrabitModal({ open, setOpen, values, setInitialValues, setImages }) {
                 </Box>
                 {
                     productData ?
-                        <Box
-                            component='pre'
-                            sx={{
-                                padding: 2,
-                                backgroundColor: '#f5f5f5',
-                                borderRadius: 1,
-                                overflow: 'auto',
-                                maxHeight: '400px',
-                            }}
-                        >
-                            {JSON.stringify(productData, null, 2)}
-                        </Box> : null
-                }
-                {
-                    productData ?
-                        <Button
-                            fullWidth
-                            variant='contained'
-                            disabled={selectedProdID === 0}
-                            color='success'
-                            onClick={() => insertValues(setInitialValues, setImages, values, productData)}
-                        >
-                            Insert Data
-                        </Button> : null
+                        <>
+                            <Box
+                                component='pre'
+                                sx={{
+                                    padding: 2,
+                                    backgroundColor: '#f5f5f5',
+                                    borderRadius: 1,
+                                    overflow: 'auto',
+                                    maxHeight: '400px',
+                                }}
+                            >
+                                {JSON.stringify(productData, null, 2)}
+                            </Box>
+                            <Button
+                                fullWidth
+                                variant='contained'
+                                color='success'
+                                onClick={() => insertValues(catData, setInitialValues, setImages, values, productData)}
+                            >
+                                Insert Data
+                            </Button>
+                        </>
+                        : null
                 }
             </Box>
         </Modal>
@@ -200,4 +227,5 @@ GrabitModal.propTypes = {
     setInitialValues: propTypes.any,
     setImages: propTypes.any,
     values: propTypes.any,
+    catData: propTypes.any,
 }

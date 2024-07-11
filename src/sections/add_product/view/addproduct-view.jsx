@@ -167,6 +167,7 @@ function AddProductView({ slug }) {
                   open={gabitModalOpen}
                   setOpen={setGrabitModalOpen}
                   values={values}
+                  catData={data}
                   setInitialValues={setInitialValues}
                   setImages={setImages}
                 />
