@@ -348,7 +348,7 @@ function AddProductView({ slug }) {
                 <Stack
                   direction='row'
                   justifyContent='flex-end'
-                  sx={{ mt: 2, position: 'fixed', bottom: 16, right: '10%' }}
+                  sx={{ mt: 2, position: 'fixed', bottom: 16, right: 16 }}
                 >
                   <Fab
                     color='primary'

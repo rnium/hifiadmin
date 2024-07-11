@@ -77,9 +77,10 @@ const getSpecTables = (prevTables, tableDataRaw, newData) => {
         if (title_searched) return title_searched.value;
         let value = null;
         spec_config.aliases.forEach(alias => {
-            const [alias_search] = specValues.filter(({title}) => title === alias);
+            const alias_search = specValues.find(({title}) => title === alias);
             if (alias_search) {
-                value = alias_search.value
+                const {value: spec_value} = alias_search;
+                value = spec_value;
             }
         })
         return value;
@@ -112,6 +113,7 @@ const insertValues = async (catData, setState, setImages, prevValues, newData) =
 
 function GrabitModal({ open, setOpen, values, catData, setInitialValues, setImages }) {
     const [selectedProdID, setSelectedProdID] = useState(0);
+    const [inserting, setInserting] = useState(false);
     const searchBoxRef = useRef();
     const { data: searchRes, loading, perform_get: getSearchResults } = useGet(grabit_endpoints.search_product, false, []);
     const {
@@ -122,6 +124,15 @@ function GrabitModal({ open, setOpen, values, catData, setInitialValues, setImag
     } = useGet(grabit_endpoints.get_product, false);
 
     const performSearch = () => getSearchResults({ query: searchBoxRef.current.value });
+
+    const handeInsertion = () => {
+        setInserting(true);
+        setTimeout(() => {
+            insertValues(catData, setInitialValues, setImages, values, productData);
+            setOpen(false);
+            setInserting(false)
+        }, [1])
+    }
 
     return (
         <Modal
@@ -228,7 +239,8 @@ function GrabitModal({ open, setOpen, values, catData, setInitialValues, setImag
                                 fullWidth
                                 variant='contained'
                                 color='success'
-                                onClick={() => insertValues(catData, setInitialValues, setImages, values, productData)}
+                                disabled={inserting}
+                                onClick={handeInsertion}
                             >
                                 Insert Data
                             </Button>
