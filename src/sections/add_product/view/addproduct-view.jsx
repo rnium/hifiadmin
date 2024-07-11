@@ -5,8 +5,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, getIn, Formik, FieldArray } from 'formik'
 
+import { RiAddLargeLine } from '@remixicon/react'
 import {
-  Box, Chip, Card, Grid, Stack, Button, Skeleton, Container, TextField, Typography,
+  Box, Fab, Chip, Card, Grid, Stack, Button, Skeleton, Container, TextField, Typography,
 } from '@mui/material';
 
 import { useGet, usePost } from 'src/hooks/useApi';
@@ -162,7 +163,7 @@ function AddProductView({ slug }) {
             const stock_error = getIn(errors, 'stock_count');
             const stock_touched = getIn(touched, 'stock_count');
             return (
-              <Form noValidate>
+              <Form noValidate >
                 <GrabitModal
                   open={gabitModalOpen}
                   setOpen={setGrabitModalOpen}
@@ -344,9 +345,21 @@ function AddProductView({ slug }) {
                     />
                   </Box>
                 </Card>
-                <Stack direction='row' justifyContent='flex-end' sx={{ mt: 2 }}>
-                  <Button disabled={postingProduct} variant='contained' type='submit' onClick={() => console.log(values)}>Add Product</Button>
+                <Stack
+                  direction='row'
+                  justifyContent='flex-end'
+                  sx={{ mt: 2, position: 'fixed', bottom: 16, right: '10%' }}
+                >
+                  <Fab
+                    color='primary'
+                    type='submit'
+                  >
+                    <RiAddLargeLine 
+                      size={25}
+                    />
+                  </Fab>
                 </Stack>
+
               </Form>
             )
           }
