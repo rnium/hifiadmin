@@ -3,9 +3,9 @@ import { message } from 'antd';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { RiAddLargeLine } from '@remixicon/react'
 import { Form, getIn, Formik, FieldArray } from 'formik'
 
-import { RiAddLargeLine } from '@remixicon/react'
 import {
   Box, Fab, Chip, Card, Grid, Stack, Button, Skeleton, Container, TextField, Typography,
 } from '@mui/material';
@@ -353,6 +353,7 @@ function AddProductView({ slug }) {
                   <Fab
                     color='primary'
                     type='submit'
+                    disabled={postingProduct}
                   >
                     <RiAddLargeLine 
                       size={25}

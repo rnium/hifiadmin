@@ -43,15 +43,15 @@ export default function CategoryPage({ slug }) {
     }
   )
   const { data, loaded, reset, error, perform_get } = useGet(`${api_endpoints.categories}${slug}`);
-  const { 
-    data: cat_products, 
-    loaded: cat_products_loaded, 
+  const {
+    data: cat_products,
+    loaded: cat_products_loaded,
     perform_get: load_cat_products,
     reset: resetCatProducts
   } = useGet(`${api_endpoints.categories}${slug}${endpoint_suffixes.products}`, false, []);
-  const { 
-    data: tagged_cat_products, 
-    loaded: tagged_cat_products_loaded, 
+  const {
+    data: tagged_cat_products,
+    loaded: tagged_cat_products_loaded,
     perform_get: load_tagged_cat_products,
     reset: resetTaggedCatProducts
   } = useGet(`${api_endpoints.tags}${slug}${endpoint_suffixes.products}`, false, []);
@@ -228,6 +228,8 @@ export default function CategoryPage({ slug }) {
           onSubmit={values => {
             post_table(values.table);
           }}
+          validateOnChange={false}
+          validateOnBlur={false}
         >
           {
             ({ values, touched, errors, handleChange, handleBlur, handleSubmit }) => (
@@ -322,7 +324,7 @@ export default function CategoryPage({ slug }) {
             )
           }
         </Formik>
-        
+
 
       </Container>
     </>

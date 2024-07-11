@@ -1,14 +1,13 @@
-import { useState, useRef } from "react";
 import propTypes from 'prop-types';
 import { Modal, Empty } from "antd";
+import { useRef, useState } from "react";
 
-import { grabit_endpoints } from 'src/utils/data';
+import { Box, Chip, List, Stack, Button, Divider, ListItem, TextField, Typography, ListItemText, ListItemButton } from "@mui/material";
 
 import { useGet } from 'src/hooks/useApi';
 
 import { slugify } from "src/utils/slugify";
-
-import { Box, Chip, List, Stack, Button, Divider, ListItem, TextField, ListItemText, Typography, ListItemButton } from "@mui/material";
+import { grabit_endpoints } from 'src/utils/data';
 
 function isObject(variable) {
     return variable !== null && typeof variable === 'object' && !Array.isArray(variable);
@@ -72,15 +71,15 @@ const getSpecTables = (prevTables, tableDataRaw, newData) => {
         })
         specValues.push(...table_specs);
     })
-    const getSpecVal = title => {
-        const spec_config = mainTableSpecs.filter(spec => spec.title === title)[0];
-        let spec_search = specValues.filter(spec => spec.title === spec_config.title);
-        if (spec_search.length > 0) return spec_search[0].value;
+    const getSpecVal = spec_title => {
+        const spec_config = mainTableSpecs.filter(spec => spec.title === spec_title)[0];
+        const [title_searched] = specValues.filter(({title}) => title === spec_config.title);
+        if (title_searched) return title_searched.value;
         let value = null;
         spec_config.aliases.forEach(alias => {
-            spec_search = specValues.filter(spec => spec.title === alias);
-            if (spec_search.length > 0) {
-                value = spec_search[0].value;
+            const [alias_search] = specValues.filter(({title}) => title === alias);
+            if (alias_search) {
+                value = alias_search.value
             }
         })
         return value;
@@ -201,7 +200,7 @@ function GrabitModal({ open, setOpen, values, catData, setInitialValues, setImag
                             <Button
                                 fullWidth
                                 variant='contained'
-                                disabled={selectedProdID === 0}
+                                disabled={selectedProdID === 0 || prodDataLoading}
                                 // color='success'
                                 sx={{ mt: 1 }}
                                 onClick={() => grabProdData({ query: selectedProdID })}
@@ -211,7 +210,7 @@ function GrabitModal({ open, setOpen, values, catData, setInitialValues, setImag
                     }
                 </Box>
                 {
-                    productData ?
+                    prodDataLoaded ?
                         <>
                             <Box
                                 component='pre'
