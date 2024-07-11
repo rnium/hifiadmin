@@ -15,7 +15,7 @@ function isObject(variable) {
 }
 
 const getImageBlobs = (urls, prod_title) => {
-    const prod_title_slug = slugify(prod_title);
+    const prod_title_slug = slugify(prod_title).substr(0, 90);
     return Promise.all(
         urls.map((url, idx) => (
             fetch(`${grabit_endpoints.fetch_img}?url=${url}`)
@@ -48,7 +48,6 @@ const getKFTableData = (data) => {
     return tbl_array
 }
 
-// const getSpecValue ()
 
 const getSpecTables = (prevTables, tableDataRaw, newData) => {
     const mainTableSpecs = [];
@@ -101,17 +100,15 @@ const insertValues = async (catData, setState, setImages, prevValues, newData) =
     const images = await getImageBlobs(newData.images, newData.title);
     setImages(images);
     // console.log(newState);
-    setState(prevState => (
-        {
-            ...prevState,
-            title: newData.title,
-            price: newData.prices.original,
-            discount: newData.prices.original - newData.prices.current,
-            details: newData.description,
-            key_features: getKFTableData(newData.key_features),
-            tables: getSpecTables(prevState.tables, catData?.tree_tables, newData)
-        }
-    ))
+    setState({
+        ...prevValues,
+        title: newData.title,
+        price: newData.prices.original,
+        discount: newData.prices.original - newData.prices.current,
+        details: newData.description,
+        key_features: getKFTableData(newData.key_features),
+        tables: getSpecTables(prevValues.tables, catData?.tree_tables, newData)
+    })
 }
 
 function GrabitModal({ open, setOpen, values, catData, setInitialValues, setImages }) {

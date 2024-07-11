@@ -49,7 +49,7 @@ export default function ProductTableRow({
             <Stack direction="row" alignItems="center" spacing={2}>
               <Avatar alt={title} src={cover} />
               <Typography variant="subtitle2" noWrap>
-                {title}
+                {title.length > 50 ? `${title.substr(0, 50)}...` : title}
               </Typography>
             </Stack>
           </Link>

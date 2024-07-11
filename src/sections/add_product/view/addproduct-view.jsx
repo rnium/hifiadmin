@@ -33,7 +33,7 @@ function AddProductView({ slug }) {
   const [images, setImages] = useState([])
   const navigate = useNavigate();
   const [tagsModalOpen, setTagsModalOpen] = useState(false);
-  const [gabitModalOpen, setGrabitModalOpen] = useState(true);
+  const [gabitModalOpen, setGrabitModalOpen] = useState(false);
   const { data, loaded, error, perform_get } = useGet(`${api_endpoints.categories}${slug}`);
   const { data: all_tags, loaded: tagsLoaded, perform_get: loadTags } = useGet(`${api_endpoints.categories}?parent=all`, false, []);
   const {
@@ -114,7 +114,6 @@ function AddProductView({ slug }) {
     images.forEach(img => {
       formData.append('images', img);
     })
-    console.log(values);
     post_product(formData);
   }
 
@@ -337,10 +336,11 @@ function AddProductView({ slug }) {
                     <TextField
                       label="Product Description"
                       name='details'
+                      value={values.details}
                       onChange={handleChange}
                       fullWidth
                       multiline
-                      rows={5}
+                      rows={20}
                     />
                   </Box>
                 </Card>
