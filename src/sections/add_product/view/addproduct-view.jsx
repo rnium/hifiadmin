@@ -72,19 +72,21 @@ function AddProductView({ slug }) {
       perform_get();
     } else {
       const dat = data;
-      setInitialValues({
-        ...initialValues,
-        tags: dat?.category_tree.map(cat => cat.id),
-        tables: dat?.tree_tables.map(tbl => ({
-          id: tbl.id,
-          title: tbl.title,
-          specs: tbl.specs.map(spec => ({
-            id: spec.id,
-            title: spec.title,
-            value: ''
+      setInitialValues(prevState => (
+        {
+          ...prevState,
+          tags: dat?.category_tree.map(cat => cat.id),
+          tables: dat?.tree_tables.map(tbl => ({
+            id: tbl.id,
+            title: tbl.title,
+            specs: tbl.specs.map(spec => ({
+              id: spec.id,
+              title: spec.title,
+              value: ''
+            }))
           }))
-        }))
-      })
+        }
+      ))
     }
   }, [perform_get, loaded, data])
 
@@ -127,7 +129,6 @@ function AddProductView({ slug }) {
     ),
   })
 
-  console.log(initialValues);
 
   return (
     <Container>
@@ -209,7 +210,7 @@ function AddProductView({ slug }) {
                             name='discount'
                             type='number'
                             label="Discount Amount"
-                            value={values.discount_price}
+                            value={values.discount}
                             onChange={handleChange}
                             onBlur={handleBlur}
                             error={Boolean(discount_error)}

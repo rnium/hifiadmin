@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import propTypes from 'prop-types';
 import { Modal, Empty } from "antd";
 
@@ -6,29 +6,30 @@ import { grabit_endpoints } from 'src/utils/data';
 
 import { useGet } from 'src/hooks/useApi';
 
-import { Box, List, Stack, Button, Divider, ListItem, TextField, ListItemText, ListItemButton } from "@mui/material";
+import { slugify } from "src/utils/slugify";
+
+import { Box, Chip, List, Stack, Button, Divider, ListItem, TextField, ListItemText, Typography, ListItemButton } from "@mui/material";
 
 function isObject(variable) {
     return variable !== null && typeof variable === 'object' && !Array.isArray(variable);
 }
 
-const getImageBlobs = async urls => {
-    let img_promise = Promise.all(
-        urls.map((url, idx) => {
-            return fetch(`${grabit_endpoints.fetch_img}?url=${url}`)
+const getImageBlobs = (urls, prod_title) => {
+    const prod_title_slug = slugify(prod_title);
+    return Promise.all(
+        urls.map((url, idx) => (
+            fetch(`${grabit_endpoints.fetch_img}?url=${url}`)
                 .then(res => res.blob())
                 .then(imgblob => {
-                    const file = new File([imgblob], `downloaded_image_${idx+1}.jpg`, {
+                    const ext = url.split('.').pop().split('?')[0];
+                    return new File([imgblob], `${prod_title_slug}_${idx + 1}.${ext}`, {
                         type: imgblob.type,
                         lastModified: Date.now()
                     })
-                    return file;
                 })
                 .catch(err => console.log(err))
-        })
+        ))
     )
-    let img_arr = await img_promise;
-    return img_arr;
 }
 
 const getKFTableData = (data) => {
@@ -48,7 +49,7 @@ const getKFTableData = (data) => {
 }
 
 const insertValues = async (setState, setImages, prevValues, newData) => {
-    const images = await getImageBlobs(newData.images);
+    const images = await getImageBlobs(newData.images, newData.title);
     setImages(images);
     setState({
         ...prevValues,
@@ -61,9 +62,8 @@ const insertValues = async (setState, setImages, prevValues, newData) => {
 }
 
 function GrabitModal({ open, setOpen, values, setInitialValues, setImages }) {
-    const [searchQ, setSearchQ] = useState('');
     const [selectedProdID, setSelectedProdID] = useState(0);
-    // const [searchRes, setSearchRes] = useState([]);
+    const searchBoxRef = useRef();
     const { data: searchRes, loading, perform_get: getSearchResults } = useGet(grabit_endpoints.search_product, false, []);
     const {
         data: productData,
@@ -71,6 +71,8 @@ function GrabitModal({ open, setOpen, values, setInitialValues, setImages }) {
         loaded: prodDataLoaded,
         perform_get: grabProdData
     } = useGet(grabit_endpoints.get_product, false);
+    
+    const performSearch = () => getSearchResults({query: searchBoxRef.current.value});
 
     return (
         <Modal
@@ -87,43 +89,62 @@ function GrabitModal({ open, setOpen, values, setInitialValues, setImages }) {
                     <TextField
                         fullWidth
                         label="Product Title"
-                        onChange={e => setSearchQ(e.target.value.toLowerCase())}
+                        inputRef={searchBoxRef}
+                        onKeyUp={e => {
+                            if (e.key === 'Enter') performSearch();
+                        }}
                     />
                     <Button
                         variant='contained'
-                        disabled={loading || searchQ.length < 2}
-                        onClick={() => getSearchResults({ query: searchQ })}
+                        disabled={loading }
+                        onClick={() => performSearch()}
                     >
                         Search
                     </Button>
                 </Stack>
                 <Box
-                    sx={{ mt: 2 }}
+                    sx={{ mt: 1 }}
                 >
+                    <Typography
+                        color="text.secondary"
+                        textAlign='center'
+                        variant='caption'
+                    >
+                        {searchRes.length} Search Results
+                    </Typography>
                     {
                         searchRes.length === 0 ?
                             <Empty /> :
-                            <List
-                                dense
-                                sx={{ width: '100%', bgcolor: 'background.paper' }}
+                            <Box
+                                sx={{
+                                    maxHeight: '400px',
+                                    overflowY: 'auto'
+                                }}
                             >
-                                {
-                                    searchRes.slice(0, 5).map((prod, idx) => (
-                                        <div key={idx}>
-                                            <ListItem>
-                                                <ListItemButton
-                                                    sx={{ width: '100%', borderRadius: 1 }}
-                                                    onClick={() => setSelectedProdID(prod.id)}
-                                                    selected={selectedProdID === prod.id}
-                                                >
-                                                    <ListItemText>{prod.title}</ListItemText>
-                                                </ListItemButton>
-                                            </ListItem>
-                                            <Divider variant="middle" component="li" />
-                                        </div>
-                                    ))
-                                }
-                            </List>
+                                <List
+                                    dense
+                                    sx={{ width: '100%', bgcolor: 'background.paper' }}
+                                >
+                                    {
+                                        searchRes.map((prod, idx) => (
+                                            <div key={idx}>
+                                                <ListItem>
+                                                    <ListItemButton
+                                                        sx={{ width: '100%', borderRadius: 1 }}
+                                                        onClick={() => setSelectedProdID(prod.id)}
+                                                        selected={selectedProdID === prod.id}
+                                                    >
+
+                                                        <ListItemText>{prod.title}</ListItemText>
+                                                        <Chip label={prod.site} />
+                                                    </ListItemButton>
+                                                </ListItem>
+                                                <Divider variant="middle" component="li" />
+                                            </div>
+                                        ))
+                                    }
+                                </List>
+                            </Box>
                     }
                     {
                         searchRes.length > 0 ?
@@ -132,6 +153,7 @@ function GrabitModal({ open, setOpen, values, setInitialValues, setImages }) {
                                 variant='contained'
                                 disabled={selectedProdID === 0}
                                 // color='success'
+                                sx={{ mt: 1 }}
                                 onClick={() => grabProdData({ query: selectedProdID })}
                             >
                                 Grab Data
