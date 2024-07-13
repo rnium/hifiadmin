@@ -16,7 +16,7 @@ function AddGrabITModal({ open, setOpen, push }) {
     const [inserting, setInserting] = useState(false);
     const { data, loading, success, error, perform_get, reset } = useGet(grabit_endpoints.get_product);
     const handleSearch = () => {
-        perform_get({ q: query })
+        perform_get({ query })
     }
     const push_tables = () => {
         setInserting(true);
