@@ -25,6 +25,14 @@ import AddGrabITModal from '../add-grabit-modal';
 
 // ----------------------------------------------------------------------
 
+const cat_color_mapping = {
+  brand: 'secondary',
+}
+
+const cat_variant_mapping = {
+  tag: 'outlined',
+}
+
 export default function CategoryPage({ slug }) {
   const [newTableTitle, setNewTableTitle] = useState('');
   const [addCategoryModalOpen, setAddCategoryModalOpen] = useState(false);
@@ -142,12 +150,12 @@ export default function CategoryPage({ slug }) {
         }
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
           <Typography variant="h4">{data?.title}</Typography>
-          {
+          {/* {
             data?.cat_type === 'tag' ? null :
               <Button onClick={() => setAddCategoryModalOpen(true)} color="success" variant="outlined" startIcon={<Iconify icon="eva:plus-fill" />}>
                 New Sub Category
               </Button>
-          }
+          } */}
         </Stack>
         <Divider />
         {/* <Typography sx={{ my: 1 }}>Sub Categories under {data?.title}</Typography> */}
@@ -178,16 +186,12 @@ export default function CategoryPage({ slug }) {
                 to={`/category/${cat.slug}`}
                 key={cat.slug}
               >
-                <Tooltip
-                  title={`${cat.cat_type} category`}
-                  arrow
+                <Button
+                  color={cat_color_mapping?.[cat.cat_type] || 'primary'}
+                  variant={cat_variant_mapping?.[cat.cat_type] || 'contained'}
                 >
-                  <Button
-                    variant='contained'
-                  >
-                    {cat.title}
-                  </Button>
-                </Tooltip>
+                  {cat.title}
+                </Button>
               </Link>
             ))
           }
