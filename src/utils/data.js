@@ -1,5 +1,5 @@
-export const api_host = 'http://127.0.0.1:8000/';
-export const grabit_host = 'http://127.0.0.1:7000/';
+export const api_host = import.meta.env.VITE_API_HOST
+export const grabit_host = import.meta.env.VITE_GRABIT_HOST
 
 const api_base_endpoints = {
     categories: 'api/categories/',
