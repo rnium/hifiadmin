@@ -17,6 +17,7 @@ const endpoint_suffixes = {
     update_table: '/tables/update/',
     products: '/products/',
     addproduct: '/addproduct/',
+    groups: '/groups/',
 }
 
 const api_endpoints = Object.keys(api_base_endpoints).reduce((acc, key) => {

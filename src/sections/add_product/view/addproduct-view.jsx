@@ -37,6 +37,8 @@ function AddProductView({ slug }) {
   const [gabitModalOpen, setGrabitModalOpen] = useState(false);
   const { data, loaded, error, perform_get } = useGet(`${api_endpoints.categories}${slug}`);
   const { data: all_tags, loaded: tagsLoaded, perform_get: loadTags } = useGet(`${api_endpoints.categories}?parent=all`, false, []);
+  const { data: tagGroups, loaded: tagsGroupsLoaded, perform_get: loadTagGroups } = useGet(`${api_endpoints.categories}${slug}${endpoint_suffixes.groups}`, false, []);
+
   const {
     loading: postingProduct,
     success: productAddSuccess,
@@ -66,7 +68,11 @@ function AddProductView({ slug }) {
     if (!tagsLoaded) {
       loadTags();
     }
-  }, [tagsLoaded, loadTags])
+    if (!tagsGroupsLoaded) {
+      loadTagGroups();
+    }
+  }, [tagsLoaded, loadTags, tagsGroupsLoaded, loadTagGroups])
+
 
   useEffect(() => {
     if (!loaded) {
@@ -262,6 +268,7 @@ function AddProductView({ slug }) {
                                         <AddTagModal
                                           open={tagsModalOpen}
                                           setOpen={setTagsModalOpen}
+                                          groups={tagGroups}
                                           all_tags={all_tags}
                                           added_tags={values.tags}
                                           push={push}
@@ -355,7 +362,7 @@ function AddProductView({ slug }) {
                     type='submit'
                     disabled={postingProduct}
                   >
-                    <RiAddLargeLine 
+                    <RiAddLargeLine
                       size={25}
                     />
                   </Fab>

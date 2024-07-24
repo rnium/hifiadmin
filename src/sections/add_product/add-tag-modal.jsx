@@ -1,10 +1,10 @@
+import { Modal } from "antd";
 import propTypes from 'prop-types';
-import { Modal, Empty } from "antd";
 import { useState, useEffect } from "react";
 
-import { Box, List, Divider, ListItem, TextField, ListItemText, ListItemButton } from "@mui/material";
+import { Box, List, Divider, ListItem, TextField, Typography, ListItemText, ListItemButton } from "@mui/material";
 
-function AddTagModal({ open, setOpen, all_tags, added_tags, push, remove }) {
+function AddTagModal({ open, setOpen, groups, all_tags, added_tags, push, remove }) {
     const [searchQ, setSearchQ] = useState('');
     const [searchRes, setSearchRes] = useState([]);
 
@@ -38,7 +38,36 @@ function AddTagModal({ open, setOpen, all_tags, added_tags, push, remove }) {
                 >
                     {
                         searchRes.length === 0 ?
-                            <Empty /> :
+                            <>
+                                {
+                                    groups.map((group, idx) => (
+                                        <Box key={idx}>
+                                            <Typography variant="h6" color='text.secondary'>{group.title}</Typography>
+                                            <List
+                                                dense
+                                                sx={{ width: '100%', bgcolor: 'background.paper' }}
+                                            >
+                                                {
+                                                    group.categories.map((s_tag, idxi) => (
+                                                        <div key={idxi}>
+                                                            <ListItem>
+                                                                <ListItemButton
+                                                                    sx={{ width: '100%', borderRadius: 1 }}
+                                                                    onClick={(e) => handleBtnClick(e, s_tag.id)}
+                                                                    selected={added_tags.includes(s_tag.id)}
+                                                                >
+                                                                    <ListItemText>{s_tag.title}</ListItemText>
+                                                                </ListItemButton>
+                                                            </ListItem>
+                                                            <Divider variant="middle" component="li" />
+                                                        </div>
+                                                    ))
+                                                }
+                                            </List>
+                                        </Box>
+                                    ))
+                                }
+                            </> :
                             <List
                                 dense
                                 sx={{ width: '100%', bgcolor: 'background.paper' }}
@@ -73,6 +102,7 @@ AddTagModal.propTypes = {
     open: propTypes.bool,
     setOpen: propTypes.any,
     all_tags: propTypes.any,
+    groups: propTypes.any,
     added_tags: propTypes.any,
     push: propTypes.func,
     remove: propTypes.func,
