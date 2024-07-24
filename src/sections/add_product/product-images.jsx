@@ -32,7 +32,11 @@ function ProductImages({ images, setImages }) {
 
     const handleChange = e => {
         const fa = Array.from(e.target.files);
-        setImages(fa);
+        setImages(prevState => [...prevState, ...fa]);
+    }
+
+    const handleRemove = idx => {
+        setImages(prevState => prevState.filter((_, index) => index !== idx));
     }
 
     return (
@@ -61,7 +65,7 @@ function ProductImages({ images, setImages }) {
                                         }}
                                     >
                                         <RiDeleteBin2Line
-                                            onClick={() => {console.log('ghi');}}
+                                            onClick={() => handleRemove(idx)}
                                             className="del-btn"
                                             size={25}
                                         />

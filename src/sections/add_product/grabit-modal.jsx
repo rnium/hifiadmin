@@ -98,8 +98,7 @@ const getSpecTables = (prevTables, tableDataRaw, newData) => {
 
 const insertValues = async (catData, setState, setImages, prevValues, newData) => {
     const images = await getImageBlobs(newData.images, newData.title);
-    setImages(images);
-    // console.log(newState);
+    setImages(prevState => [...prevState, ...images]);
     setState({
         ...prevValues,
         title: newData.title,
