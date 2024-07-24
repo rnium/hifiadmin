@@ -4,9 +4,12 @@ import 'swiper/css/pagination';
 import propTypes from 'prop-types';
 import { Thumbs, FreeMode } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { RiDeleteBin2Line } from '@remixicon/react'
 
 import { styled } from '@mui/material/styles';
 import { Box, Stack, Button, Typography } from "@mui/material";
+
+import 'src/styles/addproduct.css'
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -21,7 +24,6 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 
-
 function ProductImages({ images, setImages }) {
     const imageUrls = [];
     for (let i = 0; i < images.length; i += 1) {
@@ -32,14 +34,14 @@ function ProductImages({ images, setImages }) {
         const fa = Array.from(e.target.files);
         setImages(fa);
     }
-        
+
     return (
         <Box>
             {
                 imageUrls.length > 0 ?
                     <Swiper
                         slidesPerView={3}
-                        spaceBetween={5}
+                        spaceBetween={3}
                         freeMode
                         pagination={{
                             clickable: false,
@@ -51,9 +53,20 @@ function ProductImages({ images, setImages }) {
                         {
                             imageUrls.map((i, idx) => (
                                 <SwiperSlide key={idx}>
-                                    <Box>
+                                    <Box
+                                        className="slide-img-container"
+                                        sx={{ 
+                                            position: 'relative',
+                                            width: '100px'
+                                        }}
+                                    >
+                                        <RiDeleteBin2Line
+                                            onClick={() => {console.log('ghi');}}
+                                            className="del-btn"
+                                            size={25}
+                                        />
                                         <img
-                                            width="100px"
+                                            width="100%"
                                             src={i}
                                             className='w-full'
                                             alt='Product'
