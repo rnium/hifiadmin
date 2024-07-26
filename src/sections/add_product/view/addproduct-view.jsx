@@ -50,9 +50,9 @@ function AddProductView({ slug }) {
   const [initialValues, setInitialValues] = useState({
     category: null,
     title: '',
-    price: '',
+    price: 0,
     discount: 0,
-    stock_count: '',
+    stock_count: 1,
     details: '',
     tags: [],
     key_features: [
