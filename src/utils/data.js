@@ -1,6 +1,11 @@
 export const api_host = import.meta.env.VITE_API_HOST
 export const grabit_host = import.meta.env.VITE_GRABIT_HOST
 
+const auth_endpoints = {
+    login: 'account/admin/token/login/',
+    logout: 'auth/token/logout/',
+}
+
 const api_base_endpoints = {
     categories: 'api/categories/',
     products: 'api/products/',
@@ -30,4 +35,4 @@ const grabit_endpoints = Object.keys(grabit_base_endpoints).reduce((acc, key) =>
     return acc;
 }, {})
 
-export { api_endpoints, grabit_endpoints, endpoint_suffixes }
+export { api_endpoints, auth_endpoints, grabit_endpoints, endpoint_suffixes }

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { message } from "antd";
+import { useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -9,31 +10,47 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
+import { useRouter } from "src/routes/hooks";
+
 import { useUser } from 'src/hooks/useUser';
+import { useLogout } from 'src/hooks/useAuth';
 
 // ----------------------------------------------------------------------
 
 const MENU_OPTIONS = [
-  {
-    label: 'Home',
-    icon: 'eva:home-fill',
-  },
-  {
-    label: 'Profile',
-    icon: 'eva:person-fill',
-  },
-  {
-    label: 'Settings',
-    icon: 'eva:settings-2-fill',
-  },
+  // {
+  //   label: 'Home',
+  //   icon: 'eva:home-fill',
+  // },
+  // {
+  //   label: 'Profile',
+  //   icon: 'eva:person-fill',
+  // },
+  // {
+  //   label: 'Settings',
+  //   icon: 'eva:settings-2-fill',
+  // },
 ];
 
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
-  const {userInfo} = useUser();
+  const { userInfo, reset } = useUser();
+  const { logout, success, error } = useLogout();
+  const router = useRouter();
   // let displayName = `${userInfo.first_name}${userInfo?.lastName ? " " + userInfo?.lastName : ''}`
+
+  useEffect(() => {
+    if (success) {
+      reset();
+      router.push('/login');
+      message.info("Logged out successfully");
+    }
+    if (error) {
+      message.error("Logout failed");
+    }
+  }, [success, error, reset, router])
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
@@ -107,7 +124,7 @@ export default function AccountPopover() {
         <MenuItem
           disableRipple
           disableTouchRipple
-          onClick={handleClose}
+          onClick={() => logout()}
           sx={{ typography: 'body2', color: 'error.main', py: 1.5 }}
         >
           Logout

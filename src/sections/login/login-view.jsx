@@ -15,6 +15,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import { useRouter } from 'src/routes/hooks';
 
+import { useUser } from 'src/hooks/useUser';
 import { useLogin } from 'src/hooks/useAuth';
 
 import { bgGradient } from 'src/theme/css';
@@ -25,7 +26,8 @@ import Iconify from 'src/components/iconify';
 // ----------------------------------------------------------------------
 
 export default function LoginView() {
-  const {success, loading, error, login: perform_post} = useLogin()
+  const { success, loading, error, login: perform_post } = useLogin();
+  const { reset } = useUser();
   const theme = useTheme();
 
   const router = useRouter();
@@ -43,9 +45,10 @@ export default function LoginView() {
       message.error(error_msg || "Something went wrong");
     } else if (success) {
       message.success("Login Successful")
+      reset();
       router.push('/')
     }
-  }, [success, error, router])
+  }, [success, error, reset, router])
 
 
   const handleChange = e => {
@@ -126,7 +129,7 @@ export default function LoginView() {
         onCancel={() => setModalOpen(false)}
         title="How to reset password?"
       >
-        <Typography sx={{my: 4}}>
+        <Typography sx={{ my: 4 }}>
           Please use the <RRLink to="#">Password Reset</RRLink> option of the main site
         </Typography>
       </Modal>
@@ -139,7 +142,7 @@ export default function LoginView() {
             maxWidth: 420,
           }}
         >
-          <Typography variant="h4" sx={{mb: 3}}>Sign in to HiFi Admin</Typography>
+          <Typography variant="h4" sx={{ mb: 3 }}>Sign in to HiFi Admin</Typography>
 
           {renderForm}
         </Card>

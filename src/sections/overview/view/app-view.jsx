@@ -131,7 +131,7 @@ export default function AppView() {
         {
           !data ? null :
             data.map((d, idx) => (
-              <Link to={`/category/${d.slug}`}>
+              <Link key={idx} to={`/category/${d.slug}`}>
                 <Button
                   variant='contained'
                   key={idx}

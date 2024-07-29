@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { setAuthenticated, setData, setLoaded } from 'src/redux/accountReducer';;
+import { setAuthenticated, setData, setLoaded } from 'src/redux/accountReducer';
 import { useGet } from './useApi';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { api_host } from "src/utils/data";
 
 export const useUser = () => {
@@ -28,6 +28,11 @@ export const useUser = () => {
             dispatch(setAuthenticated(false));
         }
     }, [data, success, error])
+
+    const reset = useCallback(() => {
+        dispatch(setLoaded(false));
+        dispatch(setAuthenticated(false));
+    }, [])
     
-    return {userInfo, userIsAuthenticated, userIsLoaded, error, loadingUser: loading};
+    return {userInfo, userIsAuthenticated, userIsLoaded, error, loadingUser: loading, reset};
 }

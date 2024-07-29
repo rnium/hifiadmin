@@ -22,8 +22,11 @@ export const usePost = (url, auth_required = true, config = postDefaultConfig) =
 
     const perform_post = useCallback(async payload => {
         if (auth_required && config?.headers) {
-            config.headers.Authorization = `Token ${localStorage.getItem('hifi_admin_t')}`
+            config.headers.Authorization = `Token ${localStorage.getItem('hifi_admin_t')}`;
+        } else if (config?.headers?.Authorization) {
+            delete config.headers.Authorization;
         }
+
         setLoading(true);
         try {
             let res = await axios.post(url, payload, config);
