@@ -182,17 +182,19 @@ export default function CategoryPage({ slug }) {
           }
           {
             data?.childs.map(cat => (
-              <Link
-                to={`/category/${cat.slug}`}
-                key={cat.slug}
-              >
-                <Button
-                  color={cat_color_mapping?.[cat.cat_type] || 'primary'}
-                  variant={cat_variant_mapping?.[cat.cat_type] || 'contained'}
+              cat.cat_type !== 'tag' ?
+                <Link
+                  to={`/category/${cat.slug}`}
+                  key={cat.slug}
                 >
-                  {cat.title}
-                </Button>
-              </Link>
+                  <Button
+                    color={cat_color_mapping?.[cat.cat_type] || 'primary'}
+                    variant={cat_variant_mapping?.[cat.cat_type] || 'contained'}
+                  >
+                    {cat.title}
+                  </Button>
+                </Link>
+                : null
             ))
           }
 
