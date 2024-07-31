@@ -7,6 +7,7 @@ const auth_endpoints = {
 }
 
 const api_base_endpoints = {
+    dashboard_stats: 'api/homepage/stats/',
     categories: 'api/categories/',
     products: 'api/products/',
     tags: 'api/t/',

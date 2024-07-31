@@ -10,6 +10,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 
 import { useGet } from 'src/hooks/useApi';
+import { useUser } from 'src/hooks/useUser';
 
 import { api_endpoints as api } from 'src/utils/data';
 // import AppNewsUpdate from '../app-news-update';
@@ -20,24 +21,29 @@ import AppWidgetSummary from '../app-widget-summary';
 
 export default function AppView() {
   const { data, loaded: cat_loaded, loading, perform_get } = useGet(api.categories);
+  const { data: stats, loaded: stats_loaded, perform_get: load_stats } = useGet(api.dashboard_stats, true);
+  const { userInfo } = useUser();
 
   useEffect(() => {
     if (!cat_loaded) {
       perform_get();
     }
-  }, [cat_loaded, perform_get])
+    if (!stats_loaded) {
+      load_stats();
+    }
+  }, [cat_loaded, perform_get, stats_loaded, load_stats])
 
   return (
     <Container maxWidth="xl">
       <Typography variant="h4" sx={{ mb: 5 }}>
-        HiFi Admin, Welcome back
+        {userInfo.first_name}, Welcome back
       </Typography>
 
       <Grid container spacing={3}>
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="Total Products"
-            total={851}
+            total={ stats?.num_products || '0'}
             color="success"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_bag.png" />}
           />
@@ -45,8 +51,8 @@ export default function AppView() {
 
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
-            title="Item Orders"
-            total={1723315}
+            title="Running Orders"
+            total={stats?.num_orders || '0'}
             color="warning"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_buy.png" />}
           />
@@ -54,8 +60,8 @@ export default function AppView() {
 
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
-            title="New Users"
-            total={1352831}
+            title="Users"
+            total={stats?.num_users || '0'}
             color="info"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_users.png" />}
           />
@@ -64,7 +70,7 @@ export default function AppView() {
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="Messages"
-            total={234}
+            total={stats?.num_messages || '0'}
             color="error"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
           />
