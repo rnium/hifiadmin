@@ -18,7 +18,7 @@ import { emptyRows, applyFilter, getComparator } from './utils';
 
 // ----------------------------------------------------------------------
 
-export default function ProductTable({products, sx}) {
+export default function ProductTable({products, sx, refetch}) {
     const [page, setPage] = useState(0);
 
     const [order, setOrder] = useState('asc');
@@ -119,6 +119,7 @@ export default function ProductTable({products, sx}) {
                                 .map((row) => (
                                     <ProductTableRow
                                         key={row.id}
+                                        id={row.id}
                                         title={row.title}
                                         slug={row.slug}
                                         price={row.price}
@@ -127,6 +128,7 @@ export default function ProductTable({products, sx}) {
                                         in_stock={row.in_stock}
                                         selected={selected.indexOf(row.name) !== -1}
                                         handleClick={(event) => handleClick(event, row.name)}
+                                        refetch={refetch}
                                     />
                                 ))}
 
@@ -155,6 +157,7 @@ export default function ProductTable({products, sx}) {
 }
 
 ProductTable.propTypes = {
+    refetch: PropTypes.any,
     products: PropTypes.any,
     sx: PropTypes.any
 }

@@ -214,7 +214,7 @@ export default function CategoryPage({ slug }) {
             </Button>
           </Link>
         </Stack>
-        <ProductTable products={cat_products?.results || []} />
+        <ProductTable products={cat_products?.results || []} refetch={load_cat_products} />
         <Stack
           direction="row"
           alignItems="center"
@@ -224,7 +224,7 @@ export default function CategoryPage({ slug }) {
         >
           <Typography variant="h4">Tagged Products of {data?.title} </Typography>
         </Stack>
-        <ProductTable products={tagged_cat_products?.results || []} />
+        <ProductTable products={tagged_cat_products?.results || []} refetch={load_tagged_cat_products} />
         {/* <Divider sx={{ my: 1.5 }} /> */}
         <Formik
           initialValues={{

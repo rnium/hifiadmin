@@ -7,6 +7,10 @@ const postDefaultConfig = {
     }
 }
 
+const deleteDefaultConfig = {
+    headers: {}
+}
+
 export const usePost = (url, auth_required = true, config = postDefaultConfig) => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -83,4 +87,35 @@ export const useGet = (url, auth_required = true, defaultData = null) => {
     }, [])
 
     return { data, loaded, setLoaded, loading, success, error, perform_get, reset };
+}
+
+export const useDelete = (initialUrl, config=deleteDefaultConfig, auth_required = true) => {
+    const [url, setUrl] = useState(initialUrl);
+    const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState(false);
+    const [error, setError] = useState(null);
+
+    const reset = useCallback(() => {
+        setLoading(false);
+        setSuccess(false);
+        setError(false);
+    }, [])
+
+    const perform_delete = useCallback(async () => {
+        if (auth_required) {
+            config.headers.Authorization = `Token ${localStorage.getItem('hifi_admin_t')}`;
+        }
+        setLoading(true);
+        try {
+            await axios.delete(url, config);
+            setSuccess(true);
+            setError(null);
+        } catch (error) {
+            setSuccess(false);
+            setError(error?.response?.data);
+        } finally {
+            setLoading(false);
+        }
+    }, [url, auth_required])
+    return { loading, success, setSuccess, error, setError, perform_delete, reset, url, setUrl };
 }

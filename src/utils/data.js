@@ -9,7 +9,7 @@ const auth_endpoints = {
 const api_base_endpoints = {
     dashboard_stats: 'api/homepage/stats/',
     categories: 'api/categories/',
-    products: 'api/products/',
+    product: 'api/product/',
     tags: 'api/t/',
 }
 
@@ -22,6 +22,7 @@ const grabit_base_endpoints = {
 const endpoint_suffixes = {
     update_table: '/tables/update/',
     products: '/products/',
+    delete: '/delete/',
     addproduct: '/addproduct/',
     groups: '/groups/',
 }

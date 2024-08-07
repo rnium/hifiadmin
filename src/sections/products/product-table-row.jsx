@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { message } from 'antd';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
@@ -12,12 +13,18 @@ import TableCell from '@mui/material/TableCell';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
+import { useDelete } from 'src/hooks/useApi';
+
+import { api_endpoints, endpoint_suffixes } from 'src/utils/data';
+
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
+
 
 // ----------------------------------------------------------------------
 
 export default function ProductTableRow({
+  id,
   selected,
   title,
   slug,
@@ -26,8 +33,10 @@ export default function ProductTableRow({
   priceSale,
   in_stock,
   handleClick,
+  refetch
 }) {
   const [open, setOpen] = useState(null);
+  const { perform_delete, loading, success, error } = useDelete(`${api_endpoints.product}${id}${endpoint_suffixes.delete}`);
 
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
@@ -37,6 +46,25 @@ export default function ProductTableRow({
     setOpen(null);
   };
 
+  const handleDelete = () => {
+    // eslint-disable-next-line no-restricted-globals
+    const confirmation = confirm("Sure to delete?")
+    if (confirmation) {
+      perform_delete();
+      handleCloseMenu();
+    }
+  };
+
+  useEffect(() => {
+    if (success) {
+      message.info('Product Deleted');
+      refetch();
+    }
+    if (error) {
+      message.error("Cannot delete product");
+    }
+  }, [success, error, refetch])
+
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
@@ -45,7 +73,7 @@ export default function ProductTableRow({
         </TableCell>
 
         <TableCell component="th" scope="row" padding="none">
-          <Link to={`/product/${slug}`} style={{textDecoration: 'none', color: 'initial'}}>
+          <Link to={`/product/${slug}`} style={{ textDecoration: 'none', color: 'initial' }}>
             <Stack direction="row" alignItems="center" spacing={2}>
               <Avatar alt={title} src={cover} />
               <Typography variant="subtitle2" noWrap>
@@ -85,7 +113,7 @@ export default function ProductTableRow({
           Edit
         </MenuItem>
 
-        <MenuItem onClick={handleCloseMenu} sx={{ color: 'error.main' }}>
+        <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }} disabled={loading}>
           <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }} />
           Delete
         </MenuItem>
@@ -95,6 +123,7 @@ export default function ProductTableRow({
 }
 
 ProductTableRow.propTypes = {
+  id: PropTypes.number,
   selected: PropTypes.any,
   cover: PropTypes.any,
   handleClick: PropTypes.func,
@@ -103,4 +132,5 @@ ProductTableRow.propTypes = {
   price: PropTypes.any,
   priceSale: PropTypes.any,
   in_stock: PropTypes.bool,
+  refetch: PropTypes.any,
 };
