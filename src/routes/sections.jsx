@@ -3,6 +3,8 @@ import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 
 import DashboardLayout from 'src/layouts/dashboard';
 
+import Loader from './components/loader';
+
 export const IndexPage = lazy(() => import('src/pages/app'));
 export const BlogPage = lazy(() => import('src/pages/blog'));
 export const OrdersPage  = lazy(() => import('src/pages/orders'));
@@ -10,6 +12,7 @@ export const UserPage = lazy(() => import('src/pages/user'));
 export const LoginPage = lazy(() => import('src/pages/login'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const AddProductPage = lazy(() => import('src/pages/add-product'));
+export const EditProductPage = lazy(() => import('src/pages/edit-product'));
 export const CategoryPage = lazy(() => import('src/pages/category'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 
@@ -20,7 +23,7 @@ export default function Router() {
     {
       element: (
         <DashboardLayout>
-          <Suspense>
+          <Suspense fallback={<Loader />}>
             <Outlet />
           </Suspense>
         </DashboardLayout>
@@ -32,6 +35,7 @@ export default function Router() {
         { path: 'orders', element: <OrdersPage /> },
         { path: 'category/:slug', element: <CategoryPage /> },
         { path: 'category/:slug/addproduct', element: <AddProductPage /> },
+        { path: 'product/edit/:slug', element: <EditProductPage /> },
       ],
     },
     {

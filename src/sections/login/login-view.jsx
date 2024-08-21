@@ -64,6 +64,12 @@ export default function LoginView() {
     perform_post(formData);
   };
 
+  const handleKeyUp = e => {
+    if (e.key === 'Enter') {
+      handleClick();
+    }
+  }
+
   const renderForm = (
     <>
       <Stack spacing={3}>
@@ -74,6 +80,7 @@ export default function LoginView() {
           label="Password"
           type={showPassword ? 'text' : 'password'}
           onChange={handleChange}
+          onKeyUp={handleKeyUp}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">

@@ -47,7 +47,8 @@ export const usePost = (url, auth_required = true, config = postDefaultConfig) =
     return { data, loading, success, setSuccess, error, setError, perform_post, reset };
 }
 
-export const useGet = (url, auth_required = true, defaultData = null) => {
+export const useGet = (initialUrl, auth_required = true, defaultData = null) => {
+    const [url, setUrl] = useState(initialUrl);
     const [data, setData] = useState(defaultData);
     const [loaded, setLoaded] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -86,7 +87,7 @@ export const useGet = (url, auth_required = true, defaultData = null) => {
         setError(false);
     }, [])
 
-    return { data, loaded, setLoaded, loading, success, error, perform_get, reset };
+    return { data, loaded, setLoaded, loading, success, error, perform_get, reset, url, setUrl };
 }
 
 export const useDelete = (initialUrl, config=deleteDefaultConfig, auth_required = true) => {
