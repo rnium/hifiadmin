@@ -10,7 +10,7 @@ function EditProductPage() {
   return (
     <>
       <Helmet>
-        <title>Add New Product</title>
+        <title>Modify Product</title>
       </Helmet>
       <EditProductMain slug={params.slug} />
     </>

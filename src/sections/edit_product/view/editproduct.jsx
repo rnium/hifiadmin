@@ -6,20 +6,17 @@ import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RiAddLargeLine } from '@remixicon/react'
-import { Form, getIn, Formik, FieldArray } from 'formik'
+import { Form, getIn, Formik, FieldArray, Field } from 'formik'
 
 import {
   Box, Fab, Chip, Card, Grid, Stack, Button, Skeleton, Container, TextField, Typography,
 } from '@mui/material';
 
-import { useGet, usePost } from 'src/hooks/useApi';
+import { usePost } from 'src/hooks/useApi';
 
 import { api_endpoints, endpoint_suffixes } from 'src/utils/data';
 
-import Loading from 'src/layouts/dashboard/common/loading';
-
 import ConfigTable from 'src/sections/add_product/config-table';
-import GrabitModal from 'src/sections/add_product/grabit-modal';
 import AddTagModal from 'src/sections/add_product/add-tag-modal';
 import ProductImages from 'src/sections/add_product/product-images';
 import KeyFeatureTable from 'src/sections/add_product/keyfeature-table';
@@ -32,88 +29,31 @@ const editproduct_config = {
 }
 
 
-function EditProduct({ prod, all_tags, tagGroups }) {
+function EditProduct({ slug, prod, all_tags, tagGroups, key_features }) {
+  console.log(all_tags);
   const [images, setImages] = useState([])
   const navigate = useNavigate();
   const [tagsModalOpen, setTagsModalOpen] = useState(false);
-  const [gabitModalOpen, setGrabitModalOpen] = useState(false);
-  const { data, loaded, error, perform_get } = useGet(`${api_endpoints.categories}${slug}`);
 
   const {
     loading: postingProduct,
-    success: productAddSuccess,
-    reset: productAddReset,
-    error: productAddError,
+    success: productEditSuccess,
+    reset: productEditReset,
+    error: productEditError,
     perform_post: post_product
-  } = usePost(`${api_endpoints.categories}${slug}${endpoint_suffixes.addproduct}`, true, editproduct_config);
-
-  const [initialValues, setInitialValues] = useState({
-    category: null,
-    title: '',
-    price: 0,
-    discount: 0,
-    stock_count: 1,
-    details: '',
-    tags: [],
-    key_features: [
-      {
-        title: '',
-        value: '',
-      }
-    ],
-    tables: []
-  })
-
-  useEffect(() => {
-    if (!tagsLoaded) {
-      loadTags();
-    }
-    if (!tagsGroupsLoaded) {
-      loadTagGroups();
-    }
-  }, [tagsLoaded, loadTags, tagsGroupsLoaded, loadTagGroups])
+  } = usePost(`${api_endpoints.categories}${slug}${endpoint_suffixes.editproduct}`, true, editproduct_config);
 
 
   useEffect(() => {
-    if (!loaded) {
-      perform_get();
-    } else {
-      const dat = data;
-      setInitialValues(prevState => (
-        {
-          ...prevState,
-          category: dat?.id,
-          tags: dat?.category_tree.map(cat => cat.id),
-          tables: dat?.tree_tables.map(tbl => ({
-            id: tbl.id,
-            title: tbl.title,
-            specs: tbl.specs.map(spec => ({
-              id: spec.id,
-              title: spec.title,
-              value: ''
-            }))
-          }))
-        }
-      ))
-    }
-  }, [perform_get, loaded, data])
-
-  useEffect(() => {
-    if (productAddSuccess) {
-      message.success("Product added successfully");
+    if (productEditSuccess) {
+      message.success("Product modified successfully");
       navigate(`/category/${slug}`);
     }
-    if (productAddError) {
-      message.error(JSON.stringify(productAddError));
-      productAddReset()
+    if (productEditError) {
+      message.error(JSON.stringify(productEditError));
+      productEditReset()
     }
-  }, [productAddSuccess, productAddError, productAddReset, navigate, slug])
-
-  if (!loaded || error) {
-    return (
-      <Loading sx={{ mt: '5vh' }} size='large' />
-    )
-  }
+  }, [productEditSuccess, productEditError, productEditReset, navigate, slug])
 
   const handleSubmit = values => {
     const formData = new FormData();
@@ -139,21 +79,22 @@ function EditProduct({ prod, all_tags, tagGroups }) {
 
   return (
     <Container>
-      <Stack
-        direction='row'
-        justifyContent='space-between'
-      >
-        <Typography variant='h4'>Add New Product in <Typography variant='h4' color="secondary" component="span">{data.title}</Typography> Category</Typography>
-        <Button
-          variant='outlined'
-          onClick={() => setGrabitModalOpen(true)}
-        >
-          GrabIT
-        </Button>
-      </Stack>
+      <Typography variant='h4'>Edit {prod.title}</Typography>
       <Formik
-        enableReinitialize
-        initialValues={initialValues}
+        initialValues={
+          {
+            category: prod.category,
+            title: prod.title,
+            price: prod.price,
+            discount: prod.discount,
+            stock_count: 1,
+            details: prod.details,
+            tags: prod.tags,
+            key_features: key_features,
+            tables: prod.spec_tables,
+            images: prod.images
+          }
+        }
         validationSchema={validationSchema}
         onSubmit={values => handleSubmit(values)}
         validateOnChange={false}
@@ -166,18 +107,8 @@ function EditProduct({ prod, all_tags, tagGroups }) {
             const price_error = getIn(errors, 'price');
             const discount_error = getIn(errors, 'discount');
             const price_touched = getIn(touched, 'price');
-            const stock_error = getIn(errors, 'stock_count');
-            const stock_touched = getIn(touched, 'stock_count');
             return (
               <Form noValidate >
-                <GrabitModal
-                  open={gabitModalOpen}
-                  setOpen={setGrabitModalOpen}
-                  values={values}
-                  catData={data}
-                  setInitialValues={setInitialValues}
-                  setImages={setImages}
-                />
                 <Card sx={{ px: 2, py: 3, mt: 1 }}>
                   <Grid container spacing={2}>
                     <Grid item xs={12} md={8}>
@@ -197,7 +128,7 @@ function EditProduct({ prod, all_tags, tagGroups }) {
                             helperText={title_touched && Boolean(title_error) ? title_error : ''}
                           />
                         </Grid>
-                        <Grid item xs={12} md={4}>
+                        <Grid item xs={12} md={6}>
                           <TextField
                             fullWidth
                             variant='filled'
@@ -211,7 +142,7 @@ function EditProduct({ prod, all_tags, tagGroups }) {
                             helperText={price_touched && Boolean(price_error) ? price_error : ''}
                           />
                         </Grid>
-                        <Grid item xs={12} md={4}>
+                        <Grid item xs={12} md={6}>
                           <TextField
                             fullWidth
                             variant='filled'
@@ -225,90 +156,72 @@ function EditProduct({ prod, all_tags, tagGroups }) {
                             helperText={Boolean(discount_error) || ''}
                           />
                         </Grid>
-                        <Grid item xs={12} md={4}>
-                          <TextField
-                            fullWidth
-                            variant='filled'
-                            name='stock_count'
-                            label="Stock Count"
-                            type='number'
-                            value={values.stock_count}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            error={stock_touched && Boolean(stock_error)}
-                            helperText={stock_touched && Boolean(stock_error) ? stock_error : ''}
-                          />
-                        </Grid>
+
                         <Grid item xs={12}>
                           <Typography variant='body1'>Tags</Typography>
-                          {
-                            !tagsLoaded ?
-                              <Stack
-                                sx={{ mt: 1 }}
-                                spacing={1}
-                                direction='row'
-                              >
-                                <Skeleton variant='rounded' width={100} height={25} />
-                                <Skeleton variant='rounded' width={100} height={25} />
-                                <Skeleton variant='rounded' width={100} height={25} />
-                                <Skeleton variant='rounded' width={100} height={25} />
-                              </Stack> :
-                              <Box
-                                sx={{
-                                  display: 'flex',
-                                  flexWrap: 'wrap',
-                                  gap: 1,
-                                  mt: 1
-                                }}
-                              >
-                                <FieldArray name="tags">
-                                  {
-                                    ({ push, remove }) => (
-                                      <>
-                                        <AddTagModal
-                                          open={tagsModalOpen}
-                                          setOpen={setTagsModalOpen}
-                                          groups={tagGroups}
-                                          all_tags={all_tags}
-                                          added_tags={values.tags}
-                                          push={push}
-                                          remove={remove}
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              flexWrap: 'wrap',
+                              gap: 1,
+                              mt: 1
+                            }}
+                          >
+                            <FieldArray name="tags">
+                              {
+                                ({ push, remove }) => (
+                                  <>
+                                    <AddTagModal
+                                      open={tagsModalOpen}
+                                      setOpen={setTagsModalOpen}
+                                      groups={tagGroups}
+                                      all_tags={all_tags}
+                                      added_tags={values.tags}
+                                      push={push}
+                                      remove={remove}
+                                    />
+                                    {
+                                      values.tags.map((t, idx) => (
+                                        <Chip
+                                          key={t}
+                                          label={all_tags.find(tag => tag.id === t).title}
+                                          onDelete={() => remove(idx)}
                                         />
-                                        {
-                                          values.tags.map((t, idx) => (
-                                            <Chip
-                                              key={t}
-                                              label={all_tags.find(tag => tag.id === t).title}
-                                              onDelete={() => remove(idx)}
-                                            />
-                                          ))
-                                        }
-                                      </>
-                                    )
-                                  }
+                                      ))
+                                    }
+                                  </>
+                                )
+                              }
 
-                                </FieldArray>
-                                <Chip
-                                  variant='contained'
-                                  color='primary'
-                                  label="Add Tag"
-                                  onClick={() => setTagsModalOpen(true)}
-                                />
-                              </Box>
-                          }
+                            </FieldArray>
+                            <Chip
+                              variant='contained'
+                              color='primary'
+                              label="Add Tag"
+                              onClick={() => setTagsModalOpen(true)}
+                            />
+                          </Box>
                         </Grid>
                       </Grid>
                     </Grid>
                     <Grid item xs={12} md={4}>
                       <Typography variant='body1'>Product Images</Typography>
-                      <ProductImages
-                        images={images}
-                        setImages={setImages}
-                      />
+                      <FieldArray name='images'>
+                        {
+                          ({ remove }) => (
+                            <ProductImages
+                              images={images}
+                              setImages={setImages}
+                              prevImages={values.images}
+                              removePrev={remove}
+                            />
+                          )
+                        }
+                      </FieldArray>
                     </Grid>
                   </Grid>
                 </Card>
-                <KeyFeatureTable
+                {/* <KeyFeatureTable
                   tableData={{ specs: values.key_features }}
                   sx={{ mt: 2 }}
                   touched={touched}
@@ -351,7 +264,7 @@ function EditProduct({ prod, all_tags, tagGroups }) {
                       rows={20}
                     />
                   </Box>
-                </Card>
+                </Card> */}
                 <Stack
                   direction='row'
                   justifyContent='flex-end'

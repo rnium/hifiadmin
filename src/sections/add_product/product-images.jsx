@@ -1,5 +1,8 @@
+/* eslint-disable */
+
 import 'swiper/css';
 import { Empty } from 'antd';
+import { FieldArray } from 'formik';
 import 'swiper/css/pagination';
 import propTypes from 'prop-types';
 import { Thumbs, FreeMode } from 'swiper/modules';
@@ -8,6 +11,8 @@ import { RiDeleteBin2Line } from '@remixicon/react'
 
 import { styled } from '@mui/material/styles';
 import { Box, Stack, Button, Typography } from "@mui/material";
+
+import SlideImage from './slide-img';
 
 import 'src/styles/addproduct.css'
 
@@ -24,7 +29,8 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 
-function ProductImages({ images, setImages }) {
+function ProductImages({ images, setImages, prevImages = [], removePrev }) {
+    const hasPrev = prevImages?.length;
     const imageUrls = [];
     for (let i = 0; i < images.length; i += 1) {
         imageUrls.push(URL.createObjectURL(images[i]));
@@ -42,7 +48,7 @@ function ProductImages({ images, setImages }) {
     return (
         <Box>
             {
-                imageUrls.length > 0 ?
+                imageUrls.length || hasPrev ?
                     <Swiper
                         slidesPerView={3}
                         spaceBetween={3}
@@ -55,27 +61,22 @@ function ProductImages({ images, setImages }) {
                         className="mySwiper"
                     >
                         {
+                            prevImages.map((img_data, idx) => (
+                                <SwiperSlide key={idx}>
+                                    <SlideImage
+                                        url={img_data.url}
+                                        handleRemove={() => removePrev(idx)}
+                                    />
+                                </SwiperSlide>
+                            ))
+                        }
+                        {
                             imageUrls.map((i, idx) => (
                                 <SwiperSlide key={idx}>
-                                    <Box
-                                        className="slide-img-container"
-                                        sx={{ 
-                                            position: 'relative',
-                                            width: '100px'
-                                        }}
-                                    >
-                                        <RiDeleteBin2Line
-                                            onClick={() => handleRemove(idx)}
-                                            className="del-btn"
-                                            size={25}
-                                        />
-                                        <img
-                                            width="100%"
-                                            src={i}
-                                            className='w-full'
-                                            alt='Product'
-                                        />
-                                    </Box>
+                                    <SlideImage 
+                                        url={i}
+                                        handleRemove={() => handleRemove(idx)}
+                                    />
                                 </SwiperSlide>
                             ))
                         }
@@ -84,6 +85,12 @@ function ProductImages({ images, setImages }) {
                         description={null}
                         image={Empty.PRESENTED_IMAGE_SIMPLE}
                     />
+            }
+            {
+                hasPrev ? 
+                <Typography color='text.secondary' variant='caption'>
+                    {prevImages.length} Previous Images at first
+                </Typography> : null
             }
             <Stack
                 sx={{ mt: 2 }}
@@ -105,7 +112,7 @@ function ProductImages({ images, setImages }) {
                 <Typography
                     variant='body2'
                 >
-                    {imageUrls.length || 'No'} {imageUrls.length === 1 ? 'File' : 'Files'} Selected
+                    {imageUrls.length || 'No'} {hasPrev ? 'New' : null} {imageUrls.length === 1 ? 'File' : 'Files'} Selected
                 </Typography>
             </Stack>
         </Box>
@@ -117,4 +124,6 @@ export default ProductImages;
 ProductImages.propTypes = {
     images: propTypes.array,
     setImages: propTypes.any,
+    prevImages: propTypes.array,
+    removePrev: propTypes.any,
 }

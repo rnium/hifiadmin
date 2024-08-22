@@ -1,7 +1,7 @@
 import { message } from 'antd';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
@@ -35,6 +35,7 @@ export default function ProductTableRow({
   handleClick,
   refetch
 }) {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(null);
   const { perform_delete, loading, success, error } = useDelete(`${api_endpoints.product}${id}${endpoint_suffixes.delete}`);
 
@@ -108,7 +109,7 @@ export default function ProductTableRow({
           sx: { width: 140 },
         }}
       >
-        <MenuItem onClick={handleCloseMenu}>
+        <MenuItem onClick={() => navigate(`/product/edit/${slug}`)}>
           <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
           Edit
         </MenuItem>
