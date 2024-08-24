@@ -4,15 +4,16 @@ import * as Yup from 'yup';
 import { message } from 'antd';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { RiAddLargeLine } from '@remixicon/react'
+import { useNavigate, Link } from 'react-router-dom';
+import { RiAddLargeLine, RiSave3Fill } from '@remixicon/react'
 import { Form, getIn, Formik, FieldArray, Field } from 'formik'
 
 import {
-  Box, Fab, Chip, Card, Grid, Stack, Button, Skeleton, Container, TextField, Typography,
+  Box, Fab, Chip, Card, Grid, Stack, FormControl, Container, TextField, Typography,
+  InputLabel, Select, MenuItem, Link as MuiLink
 } from '@mui/material';
 
-import { usePost } from 'src/hooks/useApi';
+import { useGet, usePost } from 'src/hooks/useApi';
 
 import { api_endpoints, endpoint_suffixes } from 'src/utils/data';
 
@@ -30,7 +31,12 @@ const editproduct_config = {
 
 
 function EditProduct({ slug, prod, all_tags, tagGroups, key_features }) {
-  console.log(all_tags);
+  const { perform_get: fetchSpecTables, data: specTables, loading, loaded, url, setUrl } = useGet(
+    `${api_endpoints.categories}${prod.category}${endpoint_suffixes.tables}?tree=yes`,
+    false,
+    []
+  );
+  // Todo: load tables with cat change
   const [images, setImages] = useState([])
   const navigate = useNavigate();
   const [tagsModalOpen, setTagsModalOpen] = useState(false);
@@ -76,10 +82,11 @@ function EditProduct({ slug, prod, all_tags, tagGroups, key_features }) {
     ),
   })
 
+  const existing_cat = all_tags.find(tag => tag.id === prod.category);
 
   return (
     <Container>
-      <Typography variant='h4'>Edit {prod.title}</Typography>
+      <Typography variant='h4'>Edit Product</Typography>
       <Formik
         initialValues={
           {
@@ -96,12 +103,12 @@ function EditProduct({ slug, prod, all_tags, tagGroups, key_features }) {
           }
         }
         validationSchema={validationSchema}
-        onSubmit={values => handleSubmit(values)}
+        onSubmit={values => console.log(values)}
         validateOnChange={false}
         validateOnBlur={false}
       >
         {
-          ({ values, touched, errors, handleChange, handleBlur }) => {
+          ({ values, touched, errors, handleChange, handleBlur, setFieldValue }) => {
             const title_error = getIn(errors, 'product_title');
             const title_touched = getIn(touched, 'product_title');
             const price_error = getIn(errors, 'price');
@@ -109,6 +116,49 @@ function EditProduct({ slug, prod, all_tags, tagGroups, key_features }) {
             const price_touched = getIn(touched, 'price');
             return (
               <Form noValidate >
+                <Stack
+                  direction='row'
+                  spacing={2}
+                  sx={{ my: 2 }}
+                  alignItems='center'
+                >
+                  <Box sx={{ maxWidth: 400, minWidth: 250 }}>
+                    <FormControl fullWidth>
+                      <InputLabel >Product Category</InputLabel>
+                      <Select
+                        name='category'
+                        value={values.category}
+                        label="Product Category"
+                        onChange={handleChange}
+                      >
+                        {
+                          all_tags.filter(tag => tag.cat_type !== 'tag').sort(tag => tag.id).map((tag, idx) => (
+                            <MenuItem
+                              key={idx}
+                              value={tag.id}
+                            >
+                              {tag.slug}
+                            </MenuItem>
+                          ))
+                        }
+                      </Select>
+                    </FormControl>
+                  </Box>
+                  {
+                    values.category !== existing_cat.id && (
+                      <Typography
+                      >
+                        Previous&nbsp;
+                        <Chip
+                          color='error'
+                          variant='outlined'
+                          onClick={() => setFieldValue('category', existing_cat.id)}
+                          label={existing_cat.slug}
+                        />
+                      </Typography>
+                    )
+                  }
+                </Stack>
                 <Card sx={{ px: 2, py: 3, mt: 1 }}>
                   <Grid container spacing={2}>
                     <Grid item xs={12} md={8}>
@@ -221,7 +271,7 @@ function EditProduct({ slug, prod, all_tags, tagGroups, key_features }) {
                     </Grid>
                   </Grid>
                 </Card>
-                {/* <KeyFeatureTable
+                <KeyFeatureTable
                   tableData={{ specs: values.key_features }}
                   sx={{ mt: 2 }}
                   touched={touched}
@@ -229,6 +279,7 @@ function EditProduct({ slug, prod, all_tags, tagGroups, key_features }) {
                   handleChange={handleChange}
                   handleBlur={handleBlur}
                 />
+
                 <Typography
                   textAlign="center"
                   variant='h6'
@@ -250,6 +301,7 @@ function EditProduct({ slug, prod, all_tags, tagGroups, key_features }) {
                     />
                   ))
                 }
+                {/* 
                 <Card
                   sx={{ p: 2, mt: 3 }}
                 >
@@ -274,10 +326,13 @@ function EditProduct({ slug, prod, all_tags, tagGroups, key_features }) {
                     color='primary'
                     type='submit'
                     disabled={postingProduct}
+                    variant='extended'
                   >
-                    <RiAddLargeLine
+                    <RiSave3Fill
                       size={25}
+                      style={{ marginRight: 7 }}
                     />
+                    Save
                   </Fab>
                 </Stack>
 
