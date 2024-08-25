@@ -21,6 +21,7 @@ import ConfigTable from 'src/sections/add_product/config-table';
 import AddTagModal from 'src/sections/add_product/add-tag-modal';
 import ProductImages from 'src/sections/add_product/product-images';
 import KeyFeatureTable from 'src/sections/add_product/keyfeature-table';
+import { prepare_prod_spectables } from 'src/utils/editproduct';
 
 
 const editproduct_config = {
@@ -31,11 +32,7 @@ const editproduct_config = {
 
 
 function EditProduct({ slug, prod, all_tags, tagGroups, key_features }) {
-  const { perform_get: fetchSpecTables, data: specTables, loading, loaded, url, setUrl } = useGet(
-    `${api_endpoints.categories}${prod.category}${endpoint_suffixes.tables}?tree=yes`,
-    false,
-    []
-  );
+  const { perform_get: fetchSpecTables, data: specTables, loading, loaded, url, setUrl } = useGet(null, false, []);
   // Todo: load tables with cat change
   const [images, setImages] = useState([])
   const navigate = useNavigate();
@@ -49,6 +46,9 @@ function EditProduct({ slug, prod, all_tags, tagGroups, key_features }) {
     perform_post: post_product
   } = usePost(`${api_endpoints.categories}${slug}${endpoint_suffixes.editproduct}`, true, editproduct_config);
 
+  useEffect(() => {
+    fetchSpecTables();
+  }, [url])
 
   useEffect(() => {
     if (productEditSuccess) {
@@ -63,7 +63,7 @@ function EditProduct({ slug, prod, all_tags, tagGroups, key_features }) {
 
   const handleSubmit = values => {
     const formData = new FormData();
-    formData.append('json', JSON.stringify(values))
+    formData.append('json', JSON.stringify(values));
     images.forEach(img => {
       formData.append('images', img);
     })
@@ -109,6 +109,14 @@ function EditProduct({ slug, prod, all_tags, tagGroups, key_features }) {
       >
         {
           ({ values, touched, errors, handleChange, handleBlur, setFieldValue }) => {
+            useEffect(() => {
+              setUrl(`${api_endpoints.categories}${values.category}${endpoint_suffixes.tables}?tree=yes`);
+            }, [values.category])
+
+            useEffect(() => {
+              setFieldValue('tables', prepare_prod_spectables(prod.spec_tables, specTables));
+            }, [specTables])
+
             const title_error = getIn(errors, 'product_title');
             const title_touched = getIn(touched, 'product_title');
             const price_error = getIn(errors, 'price');
