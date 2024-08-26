@@ -43,8 +43,8 @@ function EditProduct({ slug, prod, all_tags, tagGroups, key_features }) {
     success: productEditSuccess,
     reset: productEditReset,
     error: productEditError,
-    perform_post: post_product
-  } = usePost(`${api_endpoints.categories}${slug}${endpoint_suffixes.editproduct}`, true, editproduct_config);
+    perform_post: edit_product
+  } = usePost(`${api_endpoints.product}${prod.id}${endpoint_suffixes.editproduct}`, true, editproduct_config);
 
   useEffect(() => {
     fetchSpecTables();
@@ -53,7 +53,7 @@ function EditProduct({ slug, prod, all_tags, tagGroups, key_features }) {
   useEffect(() => {
     if (productEditSuccess) {
       message.success("Product modified successfully");
-      navigate(`/category/${slug}`);
+      // navigate(`/category/${slug}`);
     }
     if (productEditError) {
       message.error(JSON.stringify(productEditError));
@@ -65,9 +65,9 @@ function EditProduct({ slug, prod, all_tags, tagGroups, key_features }) {
     const formData = new FormData();
     formData.append('json', JSON.stringify(values));
     images.forEach(img => {
-      formData.append('images', img);
+      formData.append('new_images', img);
     })
-    post_product(formData);
+    edit_product(formData);
   }
 
   const validationSchema = Yup.object({
@@ -103,7 +103,7 @@ function EditProduct({ slug, prod, all_tags, tagGroups, key_features }) {
           }
         }
         validationSchema={validationSchema}
-        onSubmit={values => console.log(values)}
+        onSubmit={handleSubmit}
         validateOnChange={false}
         validateOnBlur={false}
       >

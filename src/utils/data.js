@@ -24,7 +24,7 @@ const endpoint_suffixes = {
     products: '/products/',
     delete: '/delete/',
     addproduct: '/addproduct/',
-    editproduct: '/editproduct/',
+    editproduct: '/edit/',
     groups: '/groups/',
     keyfeatures: '/keyfeatures/',
     tables: '/tables/',
