@@ -36,7 +36,7 @@ export default function ProductTableRow({
   handleClick,
   refetch
 }) {
-  const { setProduct } = useStockEdit();
+  const { setProduct, requiresRefetch, setRefetchComplete } = useStockEdit();
   const navigate = useNavigate();
   const [open, setOpen] = useState(null);
   const { perform_delete, loading, success, error } = useDelete(`${api_endpoints.product}${id}${endpoint_suffixes.delete}`);
@@ -68,6 +68,15 @@ export default function ProductTableRow({
     }
   }, [success, error, refetch])
 
+  useEffect(() => {
+    if (requiresRefetch) {
+      setTimeout(() => {
+        refetch();
+        setRefetchComplete();
+      }, 10)
+    }
+  }, [requiresRefetch, setRefetchComplete, refetch])
+
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
@@ -95,7 +104,6 @@ export default function ProductTableRow({
                 title,
                 id,
                 in_stock,
-                refetch,
               })
             }}
             color={(in_stock ? 'success' : 'error')}

@@ -1,11 +1,13 @@
 import { useSelector, useDispatch } from "react-redux";
-import { setStockModalProduct } from "src/redux/productReducer";
+import { setStockModalProduct, setRequiresRefetch } from "src/redux/productReducer";
 import { useCallback } from "react";
 
 
 export const useStockEdit = () => {
     const productInfo = useSelector(state => state.product.stockModalProduct);
+    const requiresRefetch = useSelector(state => state.product.requiresRefetch);
     const dispatch = useDispatch();
+
     const clear = useCallback(() => {
         dispatch(setStockModalProduct(null));
     }, [])
@@ -13,5 +15,13 @@ export const useStockEdit = () => {
         dispatch(setStockModalProduct(prod_data));
     }, [])
 
-    return {productInfo, setProduct, clear}
+    const setRefetchNow = useCallback(() => {
+        dispatch(setRequiresRefetch(true));
+    }, [])
+
+    const setRefetchComplete = useCallback(() => {
+        dispatch(setRequiresRefetch(false));
+    }, [])
+
+    return {productInfo, setProduct, clear, requiresRefetch, setRefetchNow, setRefetchComplete}
 }

@@ -11,7 +11,8 @@ const deleteDefaultConfig = {
     headers: {}
 }
 
-export const usePost = (url, auth_required = true, config = postDefaultConfig) => {
+export const usePost = (initialUrl, auth_required = true, config = postDefaultConfig) => {
+    const [url, setUrl] = useState(initialUrl);
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
@@ -30,7 +31,7 @@ export const usePost = (url, auth_required = true, config = postDefaultConfig) =
         } else if (config?.headers?.Authorization) {
             delete config.headers.Authorization;
         }
-
+                
         setLoading(true);
         try {
             let res = await axios.post(url, payload, config);
@@ -44,7 +45,7 @@ export const usePost = (url, auth_required = true, config = postDefaultConfig) =
             setLoading(false);
         }
     }, [url, auth_required])
-    return { data, loading, success, setSuccess, error, setError, perform_post, reset };
+    return { data, loading, success, setSuccess, error, setError, perform_post, reset, url, setUrl };
 }
 
 export const useGet = (initialUrl, auth_required = true, defaultData = null) => {
