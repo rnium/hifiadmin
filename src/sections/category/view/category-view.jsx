@@ -21,8 +21,8 @@ import ProductTable from 'src/sections/products/product-table-main';
 
 import SpecTable from '../spec-table';
 import AddCatModal from '../add-modal';
+import StockEditModal from '../stockedit-modal';
 import AddGrabITModal from '../add-grabit-modal';
-
 // ----------------------------------------------------------------------
 
 const cat_color_mapping = {
@@ -125,6 +125,7 @@ export default function CategoryPage({ slug }) {
         parentType={data?.cat_type}
         refetchPage={perform_get}
       />
+      <StockEditModal />
       <Container>
         {
           data.category_tree.length > 1 ?

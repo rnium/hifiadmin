@@ -1,7 +1,7 @@
 import { message } from 'antd';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
@@ -14,6 +14,7 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
 import { useDelete } from 'src/hooks/useApi';
+import { useStockEdit } from 'src/hooks/useStockEdit';
 
 import { api_endpoints, endpoint_suffixes } from 'src/utils/data';
 
@@ -35,6 +36,7 @@ export default function ProductTableRow({
   handleClick,
   refetch
 }) {
+  const { setProduct } = useStockEdit();
   const navigate = useNavigate();
   const [open, setOpen] = useState(null);
   const { perform_delete, loading, success, error } = useDelete(`${api_endpoints.product}${id}${endpoint_suffixes.delete}`);
@@ -74,14 +76,12 @@ export default function ProductTableRow({
         </TableCell>
 
         <TableCell component="th" scope="row" padding="none">
-          <Link to={`/product/${slug}`} style={{ textDecoration: 'none', color: 'initial' }}>
-            <Stack direction="row" alignItems="center" spacing={2}>
-              <Avatar alt={title} src={cover} />
-              <Typography variant="subtitle2" noWrap>
-                {title.length > 50 ? `${title.substr(0, 50)}...` : title}
-              </Typography>
-            </Stack>
-          </Link>
+          <Stack direction="row" alignItems="center" spacing={2}>
+            <Avatar alt={title} src={cover} />
+            <Typography variant="subtitle2" noWrap>
+              {title.length > 50 ? `${title.substr(0, 50)}...` : title}
+            </Typography>
+          </Stack>
         </TableCell>
 
         <TableCell>{price}</TableCell>
@@ -89,7 +89,20 @@ export default function ProductTableRow({
         <TableCell>{priceSale || '--'}</TableCell>
 
         <TableCell>
-          <Label color={(in_stock ? 'success' : 'error')}>{(in_stock ? 'In Stock' : 'Out of stock')}</Label>
+          <Label
+            onClick={() => {
+              setProduct({
+                title,
+                id,
+                in_stock,
+                refetch,
+              })
+            }}
+            color={(in_stock ? 'success' : 'error')}
+            style={{ cursor: 'pointer' }}
+          >
+            {(in_stock ? 'In Stock' : 'Out of stock')}
+          </Label>
         </TableCell>
 
         <TableCell align="right">
