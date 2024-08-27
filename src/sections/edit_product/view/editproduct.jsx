@@ -22,6 +22,7 @@ import AddTagModal from 'src/sections/add_product/add-tag-modal';
 import ProductImages from 'src/sections/add_product/product-images';
 import KeyFeatureTable from 'src/sections/add_product/keyfeature-table';
 import { prepare_prod_spectables } from 'src/utils/editproduct';
+import Loading from 'src/layouts/dashboard/common/loading';
 
 
 const editproduct_config = {
@@ -39,6 +40,7 @@ function EditProduct({ slug, prod, all_tags, tagGroups, key_features }) {
   const [tagsModalOpen, setTagsModalOpen] = useState(false);
 
   const {
+    data,
     loading: postingProduct,
     success: productEditSuccess,
     reset: productEditReset,
@@ -53,13 +55,19 @@ function EditProduct({ slug, prod, all_tags, tagGroups, key_features }) {
   useEffect(() => {
     if (productEditSuccess) {
       message.success("Product modified successfully");
-      // navigate(`/category/${slug}`);
+      productEditReset()
     }
     if (productEditError) {
       message.error(JSON.stringify(productEditError));
       productEditReset()
     }
   }, [productEditSuccess, productEditError, productEditReset, navigate, slug])
+
+  useEffect(() => {
+    if (data?.category) {
+      navigate(`/category/${data.category}`);
+    }
+  }, [data])
 
   const handleSubmit = values => {
     const formData = new FormData();
@@ -296,6 +304,9 @@ function EditProduct({ slug, prod, all_tags, tagGroups, key_features }) {
                   Product Configurations
                 </Typography>
                 {
+                  loading ? 
+                  <Loading sx={{mt: 3}} size="large"/>
+                  :
                   values.tables.map((tbl, idx) => (
                     <ConfigTable
                       key={`tables[${idx}]`}

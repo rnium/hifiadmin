@@ -3,9 +3,9 @@ import { RiDeleteBin2Line } from '@remixicon/react'
 
 import { Box } from '@mui/material';
 
-const SlideImage = ({ url, handleRemove }) => (
+const SlideImage = ({ url, handleRemove, prev=false }) => (
     <Box
-        className="slide-img-container"
+        className={prev ? "slide-img-container prev" : "slide-img-container"}
         sx={{
             position: 'relative',
             width: '100px',
@@ -30,4 +30,5 @@ export default SlideImage;
 SlideImage.propTypes = {
     url: propTypes.any,
     handleRemove: propTypes.any,
+    prev: propTypes.bool,
 }

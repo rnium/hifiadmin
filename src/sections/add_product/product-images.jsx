@@ -66,6 +66,7 @@ function ProductImages({ images, setImages, prevImages = [], removePrev }) {
                                     <SlideImage
                                         url={img_data.url}
                                         handleRemove={() => removePrev(idx)}
+                                        prev
                                     />
                                 </SwiperSlide>
                             ))

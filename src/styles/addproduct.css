@@ -20,7 +20,18 @@
     transform: scale(1.2);
 }
 
+.slide-img-container {
+    overflow: hidden;
+    border: 1px dotted gray;
+    border-radius: 5px;
+}
+
+.slide-img-container.prev {
+    border: none;
+}
+
 .slide-img-container:hover .del-btn {
     visibility: visible;
     opacity: 1;
 }
+
