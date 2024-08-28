@@ -50,39 +50,52 @@ export default function CategoryPage({ slug }) {
       ]
     }
   )
-  const { data, loaded, reset, error, perform_get } = useGet(`${api_endpoints.categories}${slug}`);
+  const { data, loaded, loading, reset, error, perform_get, url: catUrl, setUrl: setCatUrl } = useGet(null);
   const {
     data: cat_products,
-    loaded: cat_products_loaded,
     perform_get: load_cat_products,
-    reset: resetCatProducts
-  } = useGet(`${api_endpoints.categories}${slug}${endpoint_suffixes.products}`, false, []);
+    url: catProductsUrl,
+    setUrl: setCatProductsUrl
+  } = useGet(null, false, []);
   const {
     data: tagged_cat_products,
-    loaded: tagged_cat_products_loaded,
     perform_get: load_tagged_cat_products,
-    reset: resetTaggedCatProducts
-  } = useGet(`${api_endpoints.tags}${slug}${endpoint_suffixes.products}`, false, []);
+    url: taggedProductsUrl,
+    setUrl: setTaggedProductsUrl
+  } = useGet(null, false, []);
 
-  const { loading: postingTable, success: tableUpdateSuccess, reset: tableUpdateReset, error: tableError, setError: setTableError, perform_post: post_table } = usePost(`${api_endpoints.categories}${slug}${endpoint_suffixes.update_table}`)
+  const {
+    loading: postingTable,
+    success: tableUpdateSuccess,
+    reset: tableUpdateReset,
+    error: tableError,
+    setError: setTableError,
+    perform_post: post_table,
+    setUrl: setCreateTableUrl
+  } = usePost(null, true);
+
 
   useEffect(() => {
-    if (!loaded) {
+    if (catUrl) {
       perform_get();
     }
-    if (!cat_products_loaded) {
+    if (catProductsUrl) {
       load_cat_products();
     }
-    if (!tagged_cat_products_loaded) {
+    if (taggedProductsUrl) {
       load_tagged_cat_products();
     }
-  }, [loaded, perform_get, cat_products_loaded, load_cat_products, tagged_cat_products_loaded, load_tagged_cat_products])
+  }, [catUrl, catProductsUrl, taggedProductsUrl, perform_get, load_cat_products, load_tagged_cat_products])
 
   useEffect(() => {
-    reset();
-    resetCatProducts();
-    resetTaggedCatProducts();
-  }, [slug, reset, resetCatProducts, resetTaggedCatProducts])
+    if (slug) {
+      setCatUrl(`${api_endpoints.categories}${slug}`);
+      setCatProductsUrl(`${api_endpoints.categories}${slug}${endpoint_suffixes.unpaginated_products}`);
+      setTaggedProductsUrl(`${api_endpoints.tags}${slug}${endpoint_suffixes.unpaginated_products}`);
+      setCreateTableUrl(`${api_endpoints.categories}${slug}${endpoint_suffixes.update_table}`);
+    }
+  }, [slug, setCatUrl, setCatProductsUrl, setTaggedProductsUrl, setCreateTableUrl])
+
 
   useEffect(() => {
     if (tableUpdateSuccess) {
@@ -109,7 +122,7 @@ export default function CategoryPage({ slug }) {
     )
   })
 
-  if (!loaded || error) {
+  if (!loaded || loading || error) {
     return (
       <Loading sx={{ mt: '5vh' }} size='large' />
     )
@@ -215,7 +228,7 @@ export default function CategoryPage({ slug }) {
             </Button>
           </Link>
         </Stack>
-        <ProductTable products={cat_products?.results || []} refetch={load_cat_products} />
+        <ProductTable products={cat_products || []} refetch={load_cat_products} />
         <Stack
           direction="row"
           alignItems="center"
@@ -225,7 +238,7 @@ export default function CategoryPage({ slug }) {
         >
           <Typography variant="h4">Tagged Products of {data?.title} </Typography>
         </Stack>
-        <ProductTable products={tagged_cat_products?.results || []} refetch={load_tagged_cat_products} />
+        <ProductTable products={tagged_cat_products || []} refetch={load_tagged_cat_products} />
         {/* <Divider sx={{ my: 1.5 }} /> */}
         <Formik
           initialValues={{

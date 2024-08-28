@@ -22,6 +22,7 @@ const grabit_base_endpoints = {
 const endpoint_suffixes = {
     update_table: '/tables/update/',
     products: '/products/',
+    unpaginated_products: '/products/unpaginated/',
     delete: '/delete/',
     addproduct: '/addproduct/',
     editproduct: '/edit/',
