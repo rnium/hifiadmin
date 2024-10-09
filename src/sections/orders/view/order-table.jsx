@@ -1,10 +1,11 @@
 /* eslint-disable */
+import "./styles/order-table.css"
 import React from 'react';
 import dateFormat from 'dateformat';
 import PropTypes from 'prop-types';
-import { 
-    TableContainer, Table, TableHead, TableRow,
-    TableCell, TableBody, Tooltip, Chip
+import {
+    Box, TableContainer, Table, TableHead, TableRow,
+    TableCell, TableBody, Tooltip, Chip, Stack, Pagination
 } from '@mui/material';
 
 const status_color_mapping = {
@@ -17,14 +18,14 @@ const status_variant_mapping = {
     cancelled: 'outlined'
 }
 
-const OrdersTable = ({ data }) => {
+const OrdersTable = ({ data, fetchOrder }) => {
     const orders = data?.results || []
     return (
         <TableContainer>
             <Table >
                 <TableHead>
                     <TableRow>
-                        <TableCell>Order ID</TableCell>
+                        <TableCell>Order No.</TableCell>
                         <TableCell>Time</TableCell>
                         <TableCell>Sub Total (Tk)</TableCell>
                         <TableCell>Location</TableCell>
@@ -34,7 +35,7 @@ const OrdersTable = ({ data }) => {
                 <TableBody>
                     {
                         orders.map((order, idx) => (
-                            <TableRow key={idx}>
+                            <TableRow key={idx} className="order">
                                 <TableCell>
                                     <Tooltip title={order.oid} placement="right">
                                         {order.id}
@@ -52,7 +53,7 @@ const OrdersTable = ({ data }) => {
                                     }
                                 </TableCell>
                                 <TableCell>
-                                    <Chip 
+                                    <Chip
                                         label={(order.status)}
                                         size="small"
                                         color={status_color_mapping?.[order.status] || 'primary'}
@@ -64,6 +65,20 @@ const OrdersTable = ({ data }) => {
                     }
                 </TableBody>
             </Table>
+            <Stack
+                sx={{px: 1, py: 0.5}}
+                alignItems="flex-end"
+            >
+                <Pagination
+                    count={data?.total_pages || 1}
+                    page={data?.current_page || 1}
+                    onChange={(e, v) => {
+                        fetchOrder({
+                            page: v
+                        })
+                    }}
+                />
+            </Stack>
         </TableContainer>
     )
 }
@@ -71,5 +86,6 @@ const OrdersTable = ({ data }) => {
 export default OrdersTable;
 
 OrdersTable.propTypes = {
-    data: PropTypes.any
+    data: PropTypes.any,
+    fetchOrder: PropTypes.any
 }

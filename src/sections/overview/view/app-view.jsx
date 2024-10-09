@@ -1,7 +1,7 @@
 // import { faker } from '@faker-js/faker';
 import { Spin } from 'antd';
-import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -24,11 +24,22 @@ import AppWidgetSummary from '../app-widget-summary';
 
 // ----------------------------------------------------------------------
 
+const order_get_params = {
+  page_size: 10,
+}
+
 export default function AppView() {
   const { data, loaded: cat_loaded, loading, perform_get } = useGet(api.categories);
   const { data: orders_data, loaded: orders_loaded, loading: ordersLoading, perform_get: get_orders } = useGet(api.orders);
   const { data: stats, loaded: stats_loaded, perform_get: load_stats } = useGet(api.dashboard_stats, true);
   const { userInfo } = useUser();
+
+  const fetchOrders = useCallback((params = {}) => {
+    get_orders({
+      ...order_get_params,
+      ...params
+    })
+  }, [get_orders])
 
   useEffect(() => {
     if (!cat_loaded) {
@@ -38,7 +49,7 @@ export default function AppView() {
       load_stats();
     }
     if (!orders_loaded) {
-      get_orders();
+      fetchOrders();
     }
   }, [
     cat_loaded,
@@ -46,7 +57,7 @@ export default function AppView() {
     stats_loaded,
     load_stats,
     orders_loaded,
-    get_orders
+    fetchOrders
   ])
 
   return (
@@ -187,6 +198,7 @@ export default function AppView() {
               :
               <OrdersTable
                 data={orders_data}
+                fetchOrder={fetchOrders}
               />
           }
         </Paper>
