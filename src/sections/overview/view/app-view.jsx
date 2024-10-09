@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -15,12 +16,17 @@ import { useUser } from 'src/hooks/useUser';
 import { api_endpoints as api } from 'src/utils/data';
 // import AppNewsUpdate from '../app-news-update';
 // import AppOrderTimeline from '../app-order-timeline';
+import Loader from 'src/routes/components/loader';
+
+import OrdersTable from 'src/sections/orders/view/order-table';
+
 import AppWidgetSummary from '../app-widget-summary';
 
 // ----------------------------------------------------------------------
 
 export default function AppView() {
   const { data, loaded: cat_loaded, loading, perform_get } = useGet(api.categories);
+  const { data: orders_data, loaded: orders_loaded, loading: ordersLoading, perform_get: get_orders } = useGet(api.orders);
   const { data: stats, loaded: stats_loaded, perform_get: load_stats } = useGet(api.dashboard_stats, true);
   const { userInfo } = useUser();
 
@@ -31,7 +37,17 @@ export default function AppView() {
     if (!stats_loaded) {
       load_stats();
     }
-  }, [cat_loaded, perform_get, stats_loaded, load_stats])
+    if (!orders_loaded) {
+      get_orders();
+    }
+  }, [
+    cat_loaded,
+    perform_get,
+    stats_loaded,
+    load_stats,
+    orders_loaded,
+    get_orders
+  ])
 
   return (
     <Container maxWidth="xl">
@@ -43,7 +59,7 @@ export default function AppView() {
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="Total Products"
-            total={ stats?.num_products || '0'}
+            total={stats?.num_products || '0'}
             color="success"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_bag.png" />}
           />
@@ -147,6 +163,33 @@ export default function AppView() {
               </Link>
             ))
         }
+      </Box>
+      <Box
+        sx={{ mt: 3 }}
+      >
+        <Paper
+          elevation={1}
+        >
+          <Typography
+            sx={{
+              py: 1,
+              px: 2
+            }}
+            color="text.secondary"
+          >
+            # Recent Orders
+          </Typography>
+          {
+            ordersLoading ?
+              <Loader
+                title=''
+              />
+              :
+              <OrdersTable
+                data={orders_data}
+              />
+          }
+        </Paper>
       </Box>
 
     </Container>

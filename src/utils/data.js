@@ -10,6 +10,7 @@ const api_base_endpoints = {
     dashboard_stats: 'api/homepage/stats/',
     categories: 'api/categories/',
     product: 'api/product/',
+    orders: 'api/orders/',
     tags: 'api/t/',
 }
 
