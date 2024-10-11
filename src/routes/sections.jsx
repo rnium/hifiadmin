@@ -8,6 +8,7 @@ import Loader from './components/loader';
 export const IndexPage = lazy(() => import('src/pages/app'));
 export const BlogPage = lazy(() => import('src/pages/blog'));
 export const OrdersPage  = lazy(() => import('src/pages/orders'));
+export const ViewOrderPage  = lazy(() => import('src/pages/view-order'));
 export const UserPage = lazy(() => import('src/pages/user'));
 export const LoginPage = lazy(() => import('src/pages/login'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
@@ -36,6 +37,7 @@ export default function Router() {
         { path: 'category/:slug', element: <CategoryPage /> },
         { path: 'category/:slug/addproduct', element: <AddProductPage /> },
         { path: 'product/edit/:slug', element: <EditProductPage /> },
+        { path: 'orders/:oid', element: <ViewOrderPage /> },
       ],
     },
     {

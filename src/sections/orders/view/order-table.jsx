@@ -1,25 +1,18 @@
-/* eslint-disable */
-import "./styles/order-table.css"
 import React from 'react';
-import dateFormat from 'dateformat';
 import PropTypes from 'prop-types';
+import dateFormat from 'dateformat';
+import { useNavigate } from "react-router-dom";
+
 import {
-    Box, TableContainer, Table, TableHead, TableRow,
-    TableCell, TableBody, Tooltip, Chip, Stack, Pagination
+    Stack, Table, Tooltip, TableRow, TableHead,
+    TableCell, TableBody, Pagination, TableContainer
 } from '@mui/material';
 
-const status_color_mapping = {
-    pending: 'warning',
-    cancelled: 'error',
-    shipped: 'success'
-}
-
-const status_variant_mapping = {
-    cancelled: 'outlined'
-}
+import StatusChip from './status-chip';
 
 const OrdersTable = ({ data, fetchOrder }) => {
-    const orders = data?.results || []
+    const orders = data?.results || [];
+    const navigate = useNavigate();
     return (
         <TableContainer>
             <Table >
@@ -35,7 +28,7 @@ const OrdersTable = ({ data, fetchOrder }) => {
                 <TableBody>
                     {
                         orders.map((order, idx) => (
-                            <TableRow key={idx} className="order">
+                            <TableRow key={idx} className="order" onClick={() => navigate(`/orders/${order.oid}?ref=dash`)}>
                                 <TableCell>
                                     <Tooltip title={order.oid} placement="right">
                                         {order.id}
@@ -53,11 +46,8 @@ const OrdersTable = ({ data, fetchOrder }) => {
                                     }
                                 </TableCell>
                                 <TableCell>
-                                    <Chip
-                                        label={(order.status)}
-                                        size="small"
-                                        color={status_color_mapping?.[order.status] || 'primary'}
-                                        variant={status_variant_mapping?.[order.status] || 'default'}
+                                    <StatusChip 
+                                        status={order.status}
                                     />
                                 </TableCell>
                             </TableRow>

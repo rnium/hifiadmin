@@ -33,6 +33,8 @@ export const usePost = (initialUrl, auth_required = true, config = postDefaultCo
         }
                 
         setLoading(true);
+        setSuccess(false);
+        setError(false);
         try {
             let res = await axios.post(url, payload, config);
             setData(res.data);
@@ -59,6 +61,9 @@ export const useGet = (initialUrl, auth_required = true, defaultData = null) => 
 
     const perform_get = useCallback(async (params = {}) => {
         setLoading(true);
+        setSuccess(false);
+        setError(false);
+        
         let headers = {};
         if (auth_required) {
             headers.Authorization = `Token ${localStorage.getItem('hifi_admin_t')}`
