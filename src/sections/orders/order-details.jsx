@@ -1,26 +1,33 @@
 /* eslint-disable */
-import React from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Popconfirm } from 'antd';
 
 import dateFormat from 'dateformat';
 
-import { RiCheckLine, RiCloseLine } from '@remixicon/react';
-
 import {
-  Grid, Stack, Button, Divider, Typography
+  Grid, Stack, Divider, Typography
 } from '@mui/material';
 
 import StatusChip from './view/status-chip';
 import OrderAction from './order-action';
 import OrderCancel from './order-cancel';
+import ActionToast from './action-toast';
+
 
 const OrderDetails = ({ data, fetchOrder }) => {
+  const [alertTitle, setAlertTitle] = useState(null);
+
   if (!data) {
     return null;
   }
   return (
     <>
+      <ActionToast
+        oid={data.oid}
+        title={alertTitle}
+        setTitle={setAlertTitle}
+        fetchOrder={fetchOrder}
+      />
       <Grid
         container
         spacing={2}
@@ -94,13 +101,17 @@ const OrderDetails = ({ data, fetchOrder }) => {
             alignItems="flex-end"
             spacing={1}
           >
-            <OrderAction 
+            <OrderAction
               status={data.status}
               oid={data.oid}
               fetchOrder={fetchOrder}
+              setAlertTitle={setAlertTitle}
             />
-            <OrderCancel 
+            <OrderCancel
               status={data.status}
+              oid={data.oid}
+              fetchOrder={fetchOrder}
+              setAlertTitle={setAlertTitle}
             />
           </Stack>
         </Grid>

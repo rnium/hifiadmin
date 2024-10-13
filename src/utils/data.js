@@ -32,6 +32,8 @@ const endpoint_suffixes = {
     tables: '/tables/',
     alter_stock: '/alterstock/',
     alter_status: '/alterstatus/',
+    alter_status_undo: '/alterstatus/undo/',
+    cancel: '/cancel/',
 }
 
 const api_endpoints = Object.keys(api_base_endpoints).reduce((acc, key) => {

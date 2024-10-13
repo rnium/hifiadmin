@@ -21,7 +21,7 @@ function ViewOrder({ oid }) {
     return (
         <Container>
             {
-                loading ?
+                !loaded ?
                     <div style={{ maxWidth: '300px' }}>
                         <LinearProgress />
                     </div>

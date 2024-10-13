@@ -30,27 +30,25 @@ const nextStatusMapping = {
     },
 }
 
-const OrderAction = ({ status, oid, fetchOrder }) => {
-    const { perform_post, success, error, loading } = usePost(
+const OrderAction = ({ status, oid, fetchOrder, setAlertTitle }) => {
+    const { perform_post, success, data, error, loading } = usePost(
         `${api_endpoints.orders}${oid}${endpoint_suffixes.alter_status}`
     )
     const nextStatus = nextStatusMapping[status];
 
     const handleAction = () => {
-        perform_post({
-            newstatus: nextStatus.status
-        })
+        perform_post();
     }
 
     useEffect(() => {
-        if (success) {
-            message.success('Order Updated');
+        if (success && data) {
+            setAlertTitle(data?.info || 'Order status updated');
             fetchOrder();
         }
         if (error) {
             message.error("An Error Occurred");
         }
-    }, [success, error, fetchOrder])
+    }, [success, data, error, fetchOrder, setAlertTitle])
 
     if (!nextStatus) {
         return null;
@@ -76,4 +74,5 @@ OrderAction.propTypes = {
     status: PropTypes.any,
     oid: PropTypes.any,
     fetchOrder: PropTypes.any,
+    setAlertTitle: PropTypes.func,
 }
