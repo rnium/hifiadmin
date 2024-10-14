@@ -5,8 +5,10 @@ import PropTypes from 'prop-types';
 import dateFormat from 'dateformat';
 
 import {
-  Box, Grid, Stack, Divider, Typography
+  Box, Chip, Grid, Stack, Divider, Typography
 } from '@mui/material';
+
+import { RiMapPin2Fill, RiPinDistanceFill } from '@remixicon/react';
 
 import StatusChip from './view/status-chip';
 import OrderAction from './order-action';
@@ -128,6 +130,98 @@ const OrderDetails = ({ data, fetchOrder }) => {
       <ItemsTable
         cart={data.cart}
       />
+      {/* <Divider
+        sx={{ my: 2 }}
+      /> */}
+      <Grid
+        container
+        spacing={2}
+        sx={{mt: 1}}
+      >
+        <Grid item xs={12} md={6}>
+          <Stack
+            direction='row'
+            spacing={1}
+          >
+            <Typography
+              sx={{ fontWeight: 'bold' }}
+            >
+              Customer Name:
+            </Typography>
+            <Typography>
+              {data.first_name} {data.last_name}
+            </Typography>
+          </Stack>
+          <Stack
+            direction='row'
+            spacing={1}
+          >
+            <Typography
+              sx={{ fontWeight: 'bold' }}
+            >
+              Phone:
+            </Typography>
+            <Typography>
+              {data.phone}
+            </Typography>
+          </Stack>
+          <Stack
+            direction='row'
+            spacing={1}
+          >
+            <Typography
+              sx={{ fontWeight: 'bold' }}
+            >
+              Email:
+            </Typography>
+            <Typography>
+              {data.email}
+            </Typography>
+          </Stack>
+          <Stack
+            direction='row'
+            spacing={1}
+          >
+            <Typography
+              sx={{ fontWeight: 'bold' }}
+            >
+              Shipping Address:
+            </Typography>
+            <Typography
+              color="secondary"
+            >
+              {data.address}
+            </Typography>
+          </Stack>
+          {
+            data.location === 'inside' ?
+              <Chip
+                color="secondary"
+                variant='outlined'
+                sx={{ px: 2, mt: 1 }}
+                icon={<RiMapPin2Fill size={20} />}
+                label="Inside Sylhet"
+              />
+              :
+              <Chip
+                color="secondary"
+                variant='outlined'
+                sx={{ px: 2, mt: 1 }}
+                icon={<RiPinDistanceFill size={20} />}
+                label="Outside"
+              />
+          }
+
+
+        </Grid>
+        <Grid
+          item
+          xs={12}
+          md={6}
+        >
+
+        </Grid>
+      </Grid>
     </>
   )
 }

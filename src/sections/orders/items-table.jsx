@@ -9,7 +9,9 @@ import {
 const ItemsTable = ({ cart }) => {
     const { products } = cart;
     return (
-        <Paper>
+        <Paper
+            elevation={1}
+        >
             <Typography
                 sx={{ py: 1, px: 2 }}
                 variant="h6"
