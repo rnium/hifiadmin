@@ -5,13 +5,15 @@ import PropTypes from 'prop-types';
 import dateFormat from 'dateformat';
 
 import {
-  Grid, Stack, Divider, Typography
+  Box, Grid, Stack, Divider, Typography
 } from '@mui/material';
 
 import StatusChip from './view/status-chip';
 import OrderAction from './order-action';
 import OrderCancel from './order-cancel';
 import ActionToast from './action-toast';
+import ItemsTable from './items-table';
+import OrderStepper from './order-stepper';
 
 
 const OrderDetails = ({ data, fetchOrder }) => {
@@ -116,8 +118,15 @@ const OrderDetails = ({ data, fetchOrder }) => {
           </Stack>
         </Grid>
       </Grid>
-      <Divider
-        sx={{ my: 2 }}
+      <Box
+        sx={{ py: 3 }}
+      >
+        <OrderStepper
+          status={data.status}
+        />
+      </Box>
+      <ItemsTable
+        cart={data.cart}
       />
     </>
   )
