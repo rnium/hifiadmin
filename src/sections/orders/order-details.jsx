@@ -136,7 +136,7 @@ const OrderDetails = ({ data, fetchOrder }) => {
       <Grid
         container
         spacing={2}
-        sx={{mt: 1}}
+        sx={{ mt: 1 }}
       >
         <Grid item xs={12} md={6}>
           <Stack
@@ -188,7 +188,7 @@ const OrderDetails = ({ data, fetchOrder }) => {
               Shipping Address:
             </Typography>
             <Typography
-              color="secondary"
+              color="primary"
             >
               {data.address}
             </Typography>
@@ -196,15 +196,12 @@ const OrderDetails = ({ data, fetchOrder }) => {
           {
             data.location === 'inside' ?
               <Chip
-                color="secondary"
-                variant='outlined'
                 sx={{ px: 2, mt: 1 }}
                 icon={<RiMapPin2Fill size={20} />}
                 label="Inside Sylhet"
               />
               :
               <Chip
-                color="secondary"
                 variant='outlined'
                 sx={{ px: 2, mt: 1 }}
                 icon={<RiPinDistanceFill size={20} />}
@@ -214,11 +211,95 @@ const OrderDetails = ({ data, fetchOrder }) => {
 
 
         </Grid>
-        <Grid
-          item
-          xs={12}
-          md={6}
-        >
+        <Grid item xs={12} md={6}>
+          <table>
+            <tbody>
+              <tr>
+                <td>
+                  <Typography
+                    sx={{ fontWeight: 'bold' }}
+                  >
+                    Sub Total:
+                  </Typography>
+                </td>
+                <td>
+                  <Typography>
+                    {data.cart.total_amount}
+                  </Typography>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <Typography
+                    sx={{ fontWeight: 'bold' }}
+                  >
+                    Total Items:
+                  </Typography>
+                </td>
+                <td>
+                  <Typography>
+                    {data.cart.total_items}
+                  </Typography>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <Typography
+                    sx={{ fontWeight: 'bold' }}
+                  >
+                    Shipping Charge:
+                  </Typography>
+                </td>
+                <td>
+                  <Typography>
+                    {data.cart.shipping_charge}
+                  </Typography>
+                </td>
+              </tr>
+              {
+                data.cart.coupon_discount ? (
+                  <tr>
+                    <td>
+                      <Typography
+                        sx={{ fontWeight: 'bold' }}
+                      >
+                        Coupon Discount:
+                      </Typography>
+                    </td>
+                    <td>
+                      <Typography>
+                        - {data.cart.coupon_discount}
+                      </Typography>
+                    </td>
+                  </tr>
+                ) : null
+              }
+              <tr
+                style={{
+                  border: '1px solid',
+                }}
+              >
+                <td>
+                  <Typography
+                    sx={{ fontWeight: 'bold', mr: 3 }}
+                    variant='h6'
+                    color="text.secondary"
+                  >
+                    Total Payable:
+                  </Typography>
+                </td>
+                <td>
+                  <Typography
+                    variant='h6'
+                    color="primary"
+                  >
+                    {data.payable.toLocaleString('en-in')}
+                  </Typography>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
 
         </Grid>
       </Grid>
