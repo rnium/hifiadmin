@@ -39,6 +39,7 @@ function EditProduct({ slug, prod, all_tags, tagGroups, key_features }) {
   const navigate = useNavigate();
   const [tagsModalOpen, setTagsModalOpen] = useState(false);
 
+
   const {
     data,
     loading: postingProduct,
@@ -90,7 +91,9 @@ function EditProduct({ slug, prod, all_tags, tagGroups, key_features }) {
     ),
   })
 
-  const existing_cat = all_tags.find(tag => tag.id === prod.category);
+  const existing_cat = all_tags.find(tag => tag.id === prod.category_id);
+
+  console.log(prod)
 
   return (
     <Container>
@@ -98,7 +101,7 @@ function EditProduct({ slug, prod, all_tags, tagGroups, key_features }) {
       <Formik
         initialValues={
           {
-            category: prod.category,
+            category: prod.category_id,
             title: prod.title,
             price: prod.price,
             discount: prod.discount,
